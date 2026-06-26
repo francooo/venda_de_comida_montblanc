@@ -435,7 +435,20 @@
               <div onClick="{{ goFav }}" style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;cursor:pointer;"><i class="ph ph-heart" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Favoritos</span><i class="ph ph-caret-right" style="color:#C9C2B4;"></i></div>
               <div onClick="{{ goHist }}" style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;cursor:pointer;"><i class="ph ph-receipt" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Histórico de pedidos</span><i class="ph ph-caret-right" style="color:#C9C2B4;"></i></div>
               <div style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;"><i class="ph ph-bell" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Notificações</span><span style="width:42px;height:24px;border-radius:13px;background:#1B8A4F;position:relative;"><span style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#fff;"></span></span></div>
-              <div style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;"><i class="ph ph-house" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Meu apartamento</span><span style="color:#A39C90;font-weight:600;">{{ apartment }}</span></div>
+              <div onClick="{{ toggleAptEdit }}" style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;cursor:pointer;"><i class="ph ph-house" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Meu apartamento</span><span style="color:#A39C90;font-weight:600;">{{ apartment }}</span><i class="ph ph-pencil-simple" style="font-size:17px;color:#C9C2B4;"></i></div>
+              <sc-if value="{{ editingApt }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:14px 16px 16px;border-bottom:1px solid #F4EEE1;background:#FDFAF4;">
+                  <div style="font-size:12px;font-weight:700;color:#6B675F;margin-bottom:8px;letter-spacing:.3px;">ALTERAR APARTAMENTO DE ENTREGA</div>
+                  <div style="display:flex;gap:10px;align-items:center;">
+                    <div style="flex:1;display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #1B8A4F;border-radius:12px;padding:0 13px;">
+                      <i class="ph ph-door" style="font-size:18px;color:#A39C90;flex-shrink:0;"></i>
+                      <input value="{{ aptEditInput }}" onInput="{{ onAptEditInput }}" placeholder="Número do apartamento" style="border:none;background:none;padding:13px 0;font-size:15px;width:100%;color:#1C1A17;" />
+                    </div>
+                    <button onClick="{{ saveAptEdit }}" style="background:#1B8A4F;color:#fff;border:none;border-radius:12px;padding:13px 18px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:6px;"><i class="ph-bold ph-check"></i> Salvar</button>
+                  </div>
+                  <div style="font-size:12px;color:#A39C90;margin-top:8px;">O próximo pedido será entregue neste apartamento.</div>
+                </div>
+              </sc-if>
               <div onClick="{{ logout }}" style="display:flex;align-items:center;gap:13px;padding:16px;cursor:pointer;"><i class="ph ph-sign-out" style="font-size:21px;color:#E8482B;width:24px;"></i><span style="flex:1;font-weight:600;color:#E8482B;">Sair</span></div>
             </div>
           </div>
@@ -489,6 +502,8 @@ class Component extends DCLogic {
     chatInput: '',
     payment: 'pix',
     aptInput: '',
+    editingApt: false,
+    aptEditInput: '',
     apartments: ['101', '102', '203', '305', '402', '507', '608', '609', '704', '810', '1102'],
     categories: ['Bebidas', 'Massas', 'Perecíveis', 'Água', 'Chocolates'],
     products: []
@@ -603,6 +618,20 @@ class Component extends DCLogic {
   // ── apartment ────────────────────────────────────────────────────────────
 
   selectApt = (n) => this.setState({ apartment: n, isMaster: n === '608', aptInput: n });
+
+  toggleAptEdit = () => this.setState(st => ({ editingApt: !st.editingApt, aptEditInput: st.apartment }));
+
+  onAptEditInput = (e) => this.setState({ aptEditInput: e.target.value });
+
+  saveAptEdit = () => {
+    const apt = this.state.aptEditInput.trim();
+    if (!apt) { this.showToast('ph-fill ph-warning-circle', 'Informe o número do apartamento'); return; }
+    this.setState({ apartment: apt, isMaster: apt === '608', editingApt: false });
+    if (this.state.userId) {
+      this._fetch('POST', '/user/' + this.state.userId + '/apartment', { apartment: apt }).catch(() => {});
+    }
+    this.showToast('ph-fill ph-check-circle', 'Apartamento alterado para ' + apt);
+  };
 
   onAptInput = (e) => {
     const v = e.target.value.trim();
@@ -802,6 +831,8 @@ class Component extends DCLogic {
       saveProduct: this.saveProduct, addCategory: this.addCategory, sendChat: this.sendChat,
       logout: () => this.setState({ userId: null, apartment: '', isMaster: false, favorites: {}, cart: {} }, () => this.tab('login')),
       onAptInput: this.onAptInput,
+      editingApt: s.editingApt, aptEditInput: s.aptEditInput,
+      toggleAptEdit: this.toggleAptEdit, onAptEditInput: this.onAptEditInput, saveAptEdit: this.saveAptEdit,
       onQuery: this.set('query'), onNewCat: this.set('newCat'), onChatInput: this.set('chatInput'),
       onLoginEmail: this.set('loginEmail'), onLoginPassword: this.set('loginPassword'),
       onRegName: this.set('regName'), onRegEmail: this.set('regEmail'), onRegPhone: this.set('regPhone'), onRegPassword: this.set('regPassword'),
