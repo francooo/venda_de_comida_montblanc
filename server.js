@@ -97,6 +97,22 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
+app.put('/api/products/:id', async (req, res) => {
+  const { name, cat, price, unit, icon, description, tag, active } = req.body;
+  try {
+    const r = await pool.query(
+      `UPDATE montblanc.products
+       SET name=$1, cat=$2, price=$3, unit=$4, icon=$5, description=$6, tag=$7, active=$8
+       WHERE id=$9 RETURNING *`,
+      [name, cat, price, unit, icon || 'ph-package', description || '', tag || '', active !== false, req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).json({ error: 'Produto não encontrado' });
+    res.json(r.rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ─── CATEGORIES ──────────────────────────────────────────────────────────────
 
 app.get('/api/categories', async (_req, res) => {

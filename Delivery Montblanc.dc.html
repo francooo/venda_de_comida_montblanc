@@ -364,8 +364,8 @@
           <div style="font-size:12px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR · APTO 608</div>
           <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:23px;font-weight:800;margin-top:3px;">Adicionar produto</div>
           <div style="display:flex;gap:10px;margin-top:14px;">
-            <div style="flex:1;background:rgba(255,255,255,.14);border-radius:13px;padding:12px;"><div style="font-size:21px;font-weight:800;">{{ productsCount }}</div><div style="font-size:12px;opacity:.85;">produtos ativos</div></div>
-            <button onClick="{{ goCats }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;display:flex;align-items:center;gap:6px;"><i class="ph ph-squares-four"></i></div><div style="font-size:12px;opacity:.85;margin-top:2px;">Gerenciar categorias</div></button>
+            <button onClick="{{ goManageProducts }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;">{{ productsCount }}</div><div style="font-size:12px;opacity:.85;margin-top:2px;">Editar produtos</div></button>
+            <button onClick="{{ goCats }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;display:flex;align-items:center;gap:6px;"><i class="ph ph-squares-four"></i></div><div style="font-size:12px;opacity:.85;margin-top:2px;">Categorias</div></button>
           </div>
         </div>
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:15px;">
@@ -384,6 +384,60 @@
             <div style="border:2px dashed #DDD3BF;border-radius:14px;padding:26px;text-align:center;color:#A39C90;background:#FCFAF4;"><i class="ph ph-image" style="font-size:30px;"></i><div style="font-size:13px;margin-top:6px;">Toque para enviar uma foto</div></div>
           </div>
           <button onClick="{{ saveProduct }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph-bold ph-check"></i> Publicar produto</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ GERENCIAR PRODUTOS (MASTER) ============ -->
+    <sc-if value="{{ scr_manageProducts }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:24px 22px 20px;color:#fff;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-arrow-left"></i></button>
+          <div>
+            <div style="font-size:11px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;margin-top:1px;">Meus produtos</div>
+          </div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+          <sc-for list="{{ allProductItems }}" as="p" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #F0E9DB;border-radius:15px;padding:12px 14px;">
+              <div style="width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;font-size:22px;color:rgba(180,120,40,.55);flex-shrink:0;"><i class="{{ p.iconClass }}"></i></div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ p.name }}</div>
+                <div style="font-size:12px;color:#A39C90;margin-top:2px;">{{ p.cat }} · {{ p.priceText }}</div>
+              </div>
+              <button onClick="{{ p.edit }}" style="width:38px;height:38px;border-radius:11px;background:#EAF6EE;border:none;cursor:pointer;color:#1B8A4F;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-pencil-simple"></i></button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ EDITAR PRODUTO (MASTER) ============ -->
+    <sc-if value="{{ scr_editProduct }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:24px 22px 20px;color:#fff;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-arrow-left"></i></button>
+          <div>
+            <div style="font-size:11px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;margin-top:1px;">Editar produto</div>
+          </div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:15px;">
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Nome do produto</label><input value="{{ editForm.name }}" onInput="{{ efName }}" placeholder="Nome do produto" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;"><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Preço (R$)</label><input value="{{ editForm.price }}" onInput="{{ efPrice }}" inputmode="decimal" placeholder="0,00" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+            <div style="flex:1;"><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Unidade</label><input value="{{ editForm.unit }}" onInput="{{ efUnit }}" placeholder="Ex: Porção 500g" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+          </div>
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Categoria</label>
+            <select value="{{ editForm.cat }}" onChange="{{ efCat }}" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;color:#1C1A17;">
+              <sc-for list="{{ categories }}" as="c" hint-placeholder-count="5"><option value="{{ c }}">{{ c }}</option></sc-for>
+            </select>
+          </div>
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Tag / destaque</label><input value="{{ editForm.tag }}" onInput="{{ efTag }}" placeholder="Ex: Mais vendido, Novo, Da casa..." style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Descrição</label><textarea value="{{ editForm.desc }}" onInput="{{ efDesc }}" rows="3" placeholder="Detalhes, ingredientes, porções..." style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:15px;width:100%;resize:none;line-height:1.5;"></textarea></div>
+          <button onClick="{{ updateProduct }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph-bold ph-check"></i> Salvar alterações</button>
+          <button onClick="{{ deactivateProduct }}" style="width:100%;background:#fff;color:#E8482B;border:1px solid #F0DAD3;border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph ph-trash"></i> Remover produto da loja</button>
         </div>
       </div>
     </sc-if>
@@ -497,6 +551,8 @@ class Component extends DCLogic {
     orderStep: 0,
     toast: null,
     form: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '' },
+    editingProductId: null,
+    editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '' },
     newCat: '',
     chat: [{ from: 'seller', text: 'Olá! Aqui é da Loja 608. Posso ajudar com o seu pedido?' }],
     chatInput: '',
@@ -686,6 +742,53 @@ class Component extends DCLogic {
       .catch(() => {});
   };
 
+  openEditProduct = (id) => {
+    const p = this.prod(id);
+    if (!p) return;
+    this.setState({
+      editingProductId: id,
+      editForm: { name: p.name, price: String(p.price), cat: p.cat, desc: p.description || '', unit: p.unit, tag: p.tag || '' }
+    }, () => this.go('editProduct'));
+  };
+
+  updateProduct = () => {
+    const { editingProductId, editForm } = this.state;
+    if (!editForm.name.trim() || !editForm.price) { this.showToast('ph-fill ph-warning-circle', 'Preencha nome e preço'); return; }
+    const body = {
+      name: editForm.name.trim(),
+      cat: editForm.cat,
+      price: parseFloat(String(editForm.price).replace(',', '.')) || 0,
+      unit: editForm.unit || 'Unidade',
+      icon: (this.prod(editingProductId) || {}).icon || 'ph-package',
+      description: editForm.desc,
+      tag: editForm.tag,
+      active: true
+    };
+    this._fetch('PUT', '/products/' + editingProductId, body)
+      .then(() => {
+        this._reloadProducts();
+        this.showToast('ph-fill ph-check-circle', 'Produto atualizado!');
+        this.back();
+      })
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao salvar alterações'));
+  };
+
+  deactivateProduct = () => {
+    const { editingProductId } = this.state;
+    const p = this.prod(editingProductId);
+    if (!p) return;
+    const body = { name: p.name, cat: p.cat, price: p.price, unit: p.unit, icon: p.icon, description: p.description, tag: p.tag, active: false };
+    this._fetch('PUT', '/products/' + editingProductId, body)
+      .then(() => {
+        this._reloadProducts();
+        this.showToast('ph-fill ph-check-circle', 'Produto removido da loja');
+        this.back();
+      })
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao remover produto'));
+  };
+
+  setEditForm = (k) => (e) => this.setState(st => ({ editForm: { ...st.editForm, [k]: e.target.value } }));
+
   removeCategory = (c) => {
     this._fetch('DELETE', '/categories/' + encodeURIComponent(c))
       .then(() => this._fetch('GET', '/categories').then(cats => this.setState({ categories: cats })).catch(() => {}))
@@ -797,7 +900,8 @@ class Component extends DCLogic {
       scr_checkout: scr('checkout'), scr_tracking: scr('tracking'), scr_history: scr('history'),
       scr_profile: scr('profile'), scr_addProduct: scr('addProduct'), scr_categories: scr('categories'),
       scr_chat: scr('chat'), scr_favorites: scr('favorites'),
-      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories'].includes(s.screen),
+      scr_manageProducts: scr('manageProducts'), scr_editProduct: scr('editProduct'),
+      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct'].includes(s.screen),
       tabItems, toast: s.toast,
       apartment: s.apartment, isMaster: s.isMaster, aptCanContinue: !!s.apartment, aptList,
       aptInput: s.aptInput,
@@ -819,6 +923,16 @@ class Component extends DCLogic {
       subtotalText: this.brl(subtotal), totalText: this.brl(subtotal),
       cartBadge: cartCount > 0 ? String(cartCount) : '',
       form: s.form, newCat: s.newCat, productsCount: s.products.length,
+      editForm: s.editForm,
+      allProductItems: s.products.map(p => ({
+        id: p.id, name: p.name, cat: p.cat, priceText: this.brl(p.price),
+        iconClass: 'ph ' + (p.icon || 'ph-package'),
+        edit: () => this.openEditProduct(p.id)
+      })),
+      updateProduct: this.updateProduct, deactivateProduct: this.deactivateProduct,
+      efName: this.setEditForm('name'), efPrice: this.setEditForm('price'), efUnit: this.setEditForm('unit'),
+      efDesc: this.setEditForm('desc'), efCat: this.setEditForm('cat'), efTag: this.setEditForm('tag'),
+      goManageProducts: () => this.go('manageProducts'),
       chat, chatInput: s.chatInput,
       trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
       payPix: payOpt('pix'), payCard: payOpt('card'), payCash: payOpt('cash'),
