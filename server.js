@@ -4,6 +4,8 @@ const express = require('express');
 const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
 if (!process.env.DATABASE_URL) {
   console.error('Erro: DATABASE_URL não definida. Crie o arquivo .env com base no .env.example');
@@ -14,11 +16,29 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const MASTER_EMAIL = 'andrewsfranco93@gmail.com';
 
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: uploadsDir,
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      cb(null, Date.now() + '-' + Math.random().toString(36).slice(2) + ext);
+    }
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    cb(null, /^image\//.test(file.mimetype));
+  }
+});
+
 const app = express();
 app.use(express.json());
 
 // Serve static files (support.js, etc.)
 app.use(express.static(__dirname));
+app.use('/uploads', express.static(uploadsDir));
 
 // Serve the main HTML
 app.get('/', (_req, res) => {
@@ -71,6 +91,13 @@ app.post('/api/user/:id/apartment', async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+});
+
+// ─── UPLOAD ──────────────────────────────────────────────────────────────────
+
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+  res.json({ url: '/uploads/' + req.file.filename });
 });
 
 // ─── PRODUCTS ────────────────────────────────────────────────────────────────

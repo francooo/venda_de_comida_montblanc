@@ -132,8 +132,9 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:12px 18px 0;">
               <sc-for list="{{ filtered }}" as="p" hint-placeholder-count="6">
                 <div onClick="{{ p.open }}" style="background:#fff;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 4px 14px rgba(60,45,15,.06);border:1px solid #F0E9DB;">
-                  <div style="position:relative;height:112px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 9px,transparent 9px 18px),linear-gradient(135deg,#F7E8CF,#F1D8B6);">
-                    <i class="{{ p.iconClass }}" style="font-size:42px;color:rgba(180,120,40,.55);"></i>
+                  <div style="position:relative;height:112px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 9px,transparent 9px 18px),linear-gradient(135deg,#F7E8CF,#F1D8B6);overflow:hidden;">
+                    <sc-if value="{{ p.hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ p.imageUrl }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></sc-if>
+                    <sc-if value="{{ p.noImage }}" hint-placeholder-val="{{ true }}"><i class="{{ p.iconClass }}" style="font-size:42px;color:rgba(180,120,40,.55);"></i></sc-if>
                     <button onClick="{{ p.toggleFav }}" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;color:#E8482B;">
                       <sc-if value="{{ p.fav }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-heart"></i></sc-if>
                       <sc-if value="{{ p.notFav }}" hint-placeholder-val="{{ true }}"><i class="ph ph-heart" style="color:#A39C90;"></i></sc-if>
@@ -161,8 +162,9 @@
     <sc-if value="{{ scr_product }}" hint-placeholder-val="{{ false }}">
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
         <div class="app-scroll" style="flex:1;overflow-y:auto;">
-          <div style="position:relative;height:260px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 11px,transparent 11px 22px),linear-gradient(135deg,#F7E8CF,#F1D8B6);">
-            <i class="{{ sel.iconClass }}" style="font-size:96px;color:rgba(180,120,40,.5);"></i>
+          <div style="position:relative;height:260px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 11px,transparent 11px 22px),linear-gradient(135deg,#F7E8CF,#F1D8B6);overflow:hidden;">
+            <sc-if value="{{ sel.hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ sel.imageUrl }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></sc-if>
+            <sc-if value="{{ sel.noImage }}" hint-placeholder-val="{{ true }}"><i class="{{ sel.iconClass }}" style="font-size:96px;color:rgba(180,120,40,.5);"></i></sc-if>
             <button onClick="{{ back }}" style="position:absolute;top:18px;left:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
             <button onClick="{{ sel.toggleFav }}" style="position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;color:#E8482B;display:flex;align-items:center;justify-content:center;">
               <sc-if value="{{ sel.fav }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-heart"></i></sc-if>
@@ -423,6 +425,24 @@
           </div>
         </div>
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:15px;">
+          <!-- Foto do produto -->
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Foto do produto</label>
+            <sc-if value="{{ editForm.hasImage }}" hint-placeholder-val="{{ false }}">
+              <div style="position:relative;border-radius:16px;overflow:hidden;height:170px;background:#F5F0E8;">
+                <img src="{{ editForm.imageUrl }}" style="width:100%;height:100%;object-fit:cover;">
+                <button onClick="{{ editImgTrigger }}" style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(4px);"><i class="ph ph-pencil-simple"></i> Trocar foto</button>
+              </div>
+            </sc-if>
+            <sc-if value="{{ editForm.noImage }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ editImgTrigger }}" style="border:2px dashed #DDD3BF;border-radius:14px;padding:30px 20px;text-align:center;color:#A39C90;background:#FCFAF4;cursor:pointer;">
+                <i class="ph ph-image" style="font-size:34px;"></i>
+                <div style="font-size:14px;margin-top:8px;font-weight:600;">Toque para enviar uma foto</div>
+                <div style="font-size:12px;margin-top:4px;">JPG, PNG ou WEBP · máx. 5 MB</div>
+              </div>
+            </sc-if>
+            <input type="file" id="editImgInput" accept="image/*" onChange="{{ onEditImgChange }}" style="display:none;">
+          </div>
           <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Nome do produto</label><input value="{{ editForm.name }}" onInput="{{ efName }}" placeholder="Nome do produto" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
           <div style="display:flex;gap:12px;">
             <div style="flex:1;"><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Preço (R$)</label><input value="{{ editForm.price }}" onInput="{{ efPrice }}" inputmode="decimal" placeholder="0,00" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
@@ -551,7 +571,7 @@ class Component extends DCLogic {
     toast: null,
     form: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '' },
     editingProductId: null,
-    editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '' },
+    editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '', icon: '' },
     newCat: '',
     chat: [{ from: 'seller', text: 'Olá! Aqui é da Loja 608. Posso ajudar com o seu pedido?' }],
     chatInput: '',
@@ -746,7 +766,7 @@ class Component extends DCLogic {
     if (!p) return;
     this.setState({
       editingProductId: id,
-      editForm: { name: p.name, price: String(p.price), cat: p.cat, desc: p.description || '', unit: p.unit, tag: p.tag || '' }
+      editForm: { name: p.name, price: String(p.price), cat: p.cat, desc: p.description || '', unit: p.unit, tag: p.tag || '', icon: p.icon || '' }
     }, () => this.go('editProduct'));
   };
 
@@ -758,7 +778,7 @@ class Component extends DCLogic {
       cat: editForm.cat,
       price: parseFloat(String(editForm.price).replace(',', '.')) || 0,
       unit: editForm.unit || 'Unidade',
-      icon: (this.prod(editingProductId) || {}).icon || 'ph-package',
+      icon: editForm.icon || 'ph-package',
       description: editForm.desc,
       tag: editForm.tag,
       active: true
@@ -787,6 +807,27 @@ class Component extends DCLogic {
   };
 
   setEditForm = (k) => (e) => this.setState(st => ({ editForm: { ...st.editForm, [k]: e.target.value } }));
+
+  editImgTrigger = () => { const el = document.getElementById('editImgInput'); if (el) el.click(); };
+
+  onEditImgChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('image', file);
+    this.showToast('ph ph-spinner', 'Enviando foto...');
+    fetch('/api/upload', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(r => {
+        if (r.url) {
+          this.setState(st => ({ editForm: { ...st.editForm, icon: r.url } }));
+          this.showToast('ph-fill ph-check-circle', 'Foto enviada!');
+        } else {
+          this.showToast('ph-fill ph-warning-circle', r.error || 'Erro no upload');
+        }
+      })
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao enviar foto'));
+  };
 
   removeCategory = (c) => {
     this._fetch('DELETE', '/categories/' + encodeURIComponent(c))
@@ -822,9 +863,12 @@ class Component extends DCLogic {
     const scr = (x) => s.screen === x;
     const EMPTY_PROD = { id: '', name: '', price: 0, unit: '', cat: '', icon: 'ph-package', description: '', rating: 5, sold: 0, tag: '' };
 
+    const isImgUrl = (icon) => !!(icon && (icon.startsWith('/') || icon.startsWith('http')));
     const map = (p) => ({
       id: p.id, name: p.name, unit: p.unit, priceText: this.brl(p.price), tag: p.tag || '',
-      iconClass: 'ph ' + (p.icon || 'ph-package'), fav: !!s.favorites[p.id], notFav: !s.favorites[p.id],
+      iconClass: 'ph ' + (p.icon || 'ph-package'),
+      hasImage: isImgUrl(p.icon), noImage: !isImgUrl(p.icon), imageUrl: p.icon || '',
+      fav: !!s.favorites[p.id], notFav: !s.favorites[p.id],
       open: () => this.openProduct(p.id),
       add: (e) => { e.stopPropagation(); this.addToCart(p.id); },
       toggleFav: (e) => { e.stopPropagation(); this.toggleFav(p.id); }
@@ -911,7 +955,7 @@ class Component extends DCLogic {
       query: s.query,
       filtered, hasResults: filtered.length > 0, favProducts, hasFavs: favProducts.length > 0,
       catChips, catList, categories: s.categories,
-      sel: { name: sel.name, priceText: this.brl(sel.price || 0), unit: sel.unit, desc: sel.description || '', iconClass: 'ph ' + (sel.icon || 'ph-package'), tag: sel.tag || '', fav: !!s.favorites[sel.id], notFav: !s.favorites[sel.id], toggleFav: () => this.toggleFav(sel.id) },
+      sel: { name: sel.name, priceText: this.brl(sel.price || 0), unit: sel.unit, desc: sel.description || '', iconClass: 'ph ' + (sel.icon || 'ph-package'), tag: sel.tag || '', fav: !!s.favorites[sel.id], notFav: !s.favorites[sel.id], toggleFav: () => this.toggleFav(sel.id), hasImage: !!(sel.icon && (sel.icon.startsWith('/') || sel.icon.startsWith('http'))), noImage: !(sel.icon && (sel.icon.startsWith('/') || sel.icon.startsWith('http'))), imageUrl: sel.icon || '' },
       specs, detailQty: s.detailQty,
       incDetail: () => this.setState(st => ({ detailQty: st.detailQty + 1 })),
       decDetail: () => this.setState(st => ({ detailQty: Math.max(1, st.detailQty - 1) })),
@@ -921,7 +965,7 @@ class Component extends DCLogic {
       subtotalText: this.brl(subtotal), totalText: this.brl(subtotal),
       cartBadge: cartCount > 0 ? String(cartCount) : '',
       form: s.form, newCat: s.newCat, productsCount: s.products.length,
-      editForm: s.editForm,
+      editForm: { ...s.editForm, hasImage: !!(s.editForm.icon && (s.editForm.icon.startsWith('/') || s.editForm.icon.startsWith('http'))), noImage: !(s.editForm.icon && (s.editForm.icon.startsWith('/') || s.editForm.icon.startsWith('http'))), imageUrl: s.editForm.icon },
       allProductItems: s.products.map(p => ({
         id: p.id, name: p.name, cat: p.cat, priceText: this.brl(p.price),
         iconClass: 'ph ' + (p.icon || 'ph-package'),
@@ -930,6 +974,7 @@ class Component extends DCLogic {
       updateProduct: this.updateProduct, deactivateProduct: this.deactivateProduct,
       efName: this.setEditForm('name'), efPrice: this.setEditForm('price'), efUnit: this.setEditForm('unit'),
       efDesc: this.setEditForm('desc'), efCat: this.setEditForm('cat'), efTag: this.setEditForm('tag'),
+      editImgTrigger: this.editImgTrigger, onEditImgChange: this.onEditImgChange,
       goManageProducts: () => this.go('manageProducts'),
       chat, chatInput: s.chatInput,
       trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
