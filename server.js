@@ -12,6 +12,8 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+const MASTER_EMAIL = 'andrewsfranco93@gmail.com';
+
 const app = express();
 app.use(express.json());
 
@@ -30,9 +32,10 @@ app.post('/api/register', async (req, res) => {
   if (!name || !email || !password) return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
   try {
     const hash = await bcrypt.hash(password, 10);
+    const isMaster = email.toLowerCase() === MASTER_EMAIL;
     const r = await pool.query(
-      'INSERT INTO montblanc.users (name, email, phone, password_hash) VALUES ($1,$2,$3,$4) RETURNING id, name, email, apartment, is_master',
-      [name, email, phone || null, hash]
+      'INSERT INTO montblanc.users (name, email, phone, password_hash, is_master) VALUES ($1,$2,$3,$4,$5) RETURNING id, name, email, apartment, is_master',
+      [name, email, phone || null, hash, isMaster]
     );
     res.json({ ok: true, user: r.rows[0] });
   } catch (e) {
@@ -59,9 +62,10 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/user/:id/apartment', async (req, res) => {
   const { apartment } = req.body;
   try {
+    // is_master nunca muda por troca de apartamento — depende exclusivamente do e-mail
     await pool.query(
-      'UPDATE montblanc.users SET apartment = $1, is_master = $2 WHERE id = $3',
-      [apartment, apartment === '608', req.params.id]
+      'UPDATE montblanc.users SET apartment = $1 WHERE id = $2',
+      [apartment, req.params.id]
     );
     res.json({ ok: true });
   } catch (e) {

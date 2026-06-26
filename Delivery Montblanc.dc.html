@@ -617,7 +617,7 @@ class Component extends DCLogic {
 
   // ── apartment ────────────────────────────────────────────────────────────
 
-  selectApt = (n) => this.setState({ apartment: n, isMaster: n === '608', aptInput: n });
+  selectApt = (n) => this.setState({ apartment: n, aptInput: n });
 
   toggleAptEdit = () => this.setState(st => ({ editingApt: !st.editingApt, aptEditInput: st.apartment }));
 
@@ -626,7 +626,7 @@ class Component extends DCLogic {
   saveAptEdit = () => {
     const apt = this.state.aptEditInput.trim();
     if (!apt) { this.showToast('ph-fill ph-warning-circle', 'Informe o número do apartamento'); return; }
-    this.setState({ apartment: apt, isMaster: apt === '608', editingApt: false });
+    this.setState({ apartment: apt, editingApt: false });
     if (this.state.userId) {
       this._fetch('POST', '/user/' + this.state.userId + '/apartment', { apartment: apt }).catch(() => {});
     }
@@ -635,7 +635,7 @@ class Component extends DCLogic {
 
   onAptInput = (e) => {
     const v = e.target.value.trim();
-    this.setState({ aptInput: e.target.value, apartment: v || '', isMaster: v === '608' });
+    this.setState({ aptInput: e.target.value, apartment: v || '' });
   };
 
   // ── orders ───────────────────────────────────────────────────────────────
