@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; }
+  .app-scroll::-webkit-scrollbar { width: 0; height: 0; }
+  input, textarea, button { font-family: inherit; }
+  input:focus, textarea:focus { outline: none; border-color: #1B8A4F !important; }
+  @keyframes scrIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(27,138,79,.4); } 50% { box-shadow: 0 0 0 8px rgba(27,138,79,0); } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#ECE3D2;display:flex;align-items:stretch;justify-content:center;font-family:'Plus Jakarta Sans',-apple-system,sans-serif;color:#1C1A17;background-image:radial-gradient(circle at 20% 10%,#F3ECDD 0,transparent 45%),radial-gradient(circle at 85% 90%,#E7F0E5 0,transparent 40%);">
+  <div style="position:relative;width:100%;max-width:440px;background:#FBF7EF;min-height:100vh;box-shadow:0 0 80px rgba(60,45,15,.14);overflow:hidden;display:flex;flex-direction:column;">
+
+    <!-- ============ LOGIN ============ -->
+    <sc-if value="{{ scr_login }}" hint-placeholder-val="{{ true }}">
+      <div class="app-scroll" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:0;animation:scrIn .35s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#13683C);padding:64px 28px 52px;color:#fff;border-radius:0 0 32px 32px;">
+          <div style="width:62px;height:62px;border-radius:18px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:22px;"><i class="ph-fill ph-storefront"></i></div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:34px;font-weight:800;line-height:1.05;letter-spacing:-.5px;">Delivery<br>Montblanc</div>
+          <div style="margin-top:12px;font-size:15px;opacity:.85;">O delivery exclusivo do seu condomínio.</div>
+        </div>
+        <div style="padding:32px 28px;display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">E-mail</label>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E7DECB;border-radius:13px;padding:0 15px;"><i class="ph ph-envelope-simple" style="font-size:20px;color:#A39C90;"></i><input type="email" placeholder="voce@email.com" style="border:none;background:none;padding:15px 0;font-size:16px;width:100%;color:#1C1A17;"></div>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Senha</label>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E7DECB;border-radius:13px;padding:0 15px;"><i class="ph ph-lock-simple" style="font-size:20px;color:#A39C90;"></i><input type="password" placeholder="••••••••" style="border:none;background:none;padding:15px 0;font-size:16px;width:100%;color:#1C1A17;"></div>
+          </div>
+          <button onClick="{{ doLogin }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;">Entrar <i class="ph-bold ph-arrow-right"></i></button>
+          <div style="display:flex;align-items:center;gap:12px;margin:8px 0;color:#B7B0A2;font-size:13px;"><div style="flex:1;height:1px;background:#E7DECB;"></div>ou<div style="flex:1;height:1px;background:#E7DECB;"></div></div>
+          <button onClick="{{ doLogin }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><i class="ph-bold ph-google-logo" style="font-size:20px;color:#1B8A4F;"></i> Continuar com Google</button>
+          <div style="text-align:center;margin-top:14px;font-size:14px;color:#6B675F;">Não tem conta? <span onClick="{{ goRegister }}" style="color:#1B8A4F;font-weight:700;cursor:pointer;">Cadastre-se</span></div>
+          <div style="text-align:center;font-size:12px;color:#B7B0A2;margin-top:auto;padding-top:18px;">Acesso exclusivo para moradores do Cond. Montblanc</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CADASTRO ============ -->
+    <sc-if value="{{ scr_register }}" hint-placeholder-val="{{ true }}">
+      <div class="app-scroll" style="flex:1;overflow-y:auto;animation:scrIn .35s ease;">
+        <div style="padding:26px 24px 8px;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Criar conta</div>
+        </div>
+        <div style="padding:14px 24px 24px;display:flex;flex-direction:column;gap:15px;">
+          <div style="font-size:14px;color:#6B675F;">Cadastre-se para pedir da Loja 608 com entrega no seu apartamento.</div>
+          <input value="{{ name }}" onInput="{{ onName }}" placeholder="Nome completo" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
+          <input type="email" placeholder="E-mail" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
+          <input type="tel" placeholder="Telefone / WhatsApp" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
+          <input type="password" placeholder="Crie uma senha" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
+          <button onClick="{{ doRegister }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;">Continuar</button>
+          <button onClick="{{ doRegister }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><i class="ph-bold ph-google-logo" style="font-size:20px;color:#1B8A4F;"></i> Cadastrar com Google</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ SELEÇÃO DE APARTAMENTO ============ -->
+    <sc-if value="{{ scr_apt }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;animation:scrIn .35s ease;overflow:hidden;">
+        <div style="padding:30px 24px 18px;">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;line-height:1.1;">Qual é o seu apartamento?</div>
+          <div style="font-size:14px;color:#6B675F;margin-top:8px;line-height:1.5;">Suas entregas chegam aqui. O apartamento <b style="color:#1B8A4F;">608</b> é a loja oficial do condomínio.</div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:4px 24px 18px;display:flex;flex-direction:column;gap:10px;">
+          <sc-for list="{{ aptList }}" as="a" hint-placeholder-count="6">
+            <button onClick="{{ a.select }}" style="{{ a.style }}">
+              <div style="display:flex;align-items:center;gap:13px;">
+                <div style="width:42px;height:42px;border-radius:11px;background:#F3ECDD;display:flex;align-items:center;justify-content:center;font-size:19px;color:#1B8A4F;"><i class="ph ph-door"></i></div>
+                <div><div style="font-weight:700;font-size:16px;">Apto {{ a.n }}</div><sc-if value="{{ a.isStore }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#1B8A4F;font-weight:600;">Loja oficial · vende produtos</div></sc-if></div>
+              </div>
+              <sc-if value="{{ a.selected }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-check-circle" style="font-size:24px;color:#1B8A4F;"></i></sc-if>
+            </button>
+          </sc-for>
+        </div>
+        <div style="padding:16px 24px 24px;border-top:1px solid #EFE8DA;background:#FBF7EF;">
+          <button onClick="{{ confirmApt }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">Entrar na loja <i class="ph-bold ph-arrow-right"></i></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ HOME / VITRINE ============ -->
+    <sc-if value="{{ scr_home }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:26px 22px 20px;color:#fff;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+            <div>
+              <div style="font-size:12px;opacity:.8;font-weight:600;letter-spacing:.4px;">LOJA OFICIAL · APTO 608</div>
+              <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:25px;font-weight:800;margin-top:3px;">Delivery Montblanc</div>
+              <div style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:13px;"><span style="width:8px;height:8px;border-radius:50%;background:#7DF0A6;box-shadow:0 0 0 3px rgba(125,240,166,.25);"></span> Aberto agora · até 22h · entrega grátis</div>
+            </div>
+            <button onClick="{{ openCart }}" style="position:relative;width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-shopping-bag-open"></i><sc-if value="{{ cartBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-5px;right:-5px;background:#F2A03D;color:#3a2400;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;">{{ cartBadge }}</span></sc-if></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.95);border-radius:13px;padding:0 14px;margin-top:18px;"><i class="ph ph-magnifying-glass" style="font-size:19px;color:#A39C90;"></i><input value="{{ query }}" onInput="{{ onQuery }}" placeholder="Buscar refrigerante, massa, água..." style="border:none;background:none;padding:13px 0;font-size:15px;width:100%;color:#1C1A17;"></div>
+        </div>
+
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding-bottom:14px;">
+          <div class="app-scroll" style="display:flex;gap:9px;overflow-x:auto;padding:16px 18px 6px;">
+            <sc-for list="{{ catChips }}" as="c" hint-placeholder-count="5">
+              <button onClick="{{ c.select }}" style="{{ c.style }}">{{ c.name }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:12px 18px 0;">
+              <sc-for list="{{ filtered }}" as="p" hint-placeholder-count="6">
+                <div onClick="{{ p.open }}" style="background:#fff;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 4px 14px rgba(60,45,15,.06);border:1px solid #F0E9DB;">
+                  <div style="position:relative;height:112px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 9px,transparent 9px 18px),linear-gradient(135deg,#F7E8CF,#F1D8B6);">
+                    <i class="{{ p.iconClass }}" style="font-size:42px;color:rgba(180,120,40,.55);"></i>
+                    <button onClick="{{ p.toggleFav }}" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;color:#E8482B;">
+                      <sc-if value="{{ p.fav }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-heart"></i></sc-if>
+                      <sc-if value="{{ p.notFav }}" hint-placeholder-val="{{ true }}"><i class="ph ph-heart" style="color:#A39C90;"></i></sc-if>
+                    </button>
+                    <sc-if value="{{ p.tag }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;background:#1B8A4F;color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:7px;">{{ p.tag }}</span></sc-if>
+                  </div>
+                  <div style="padding:11px 12px 13px;">
+                    <div style="font-weight:700;font-size:14px;line-height:1.25;min-height:35px;">{{ p.name }}</div>
+                    <div style="font-size:11px;color:#A39C90;margin:2px 0 8px;display:flex;align-items:center;gap:4px;"><i class="ph-fill ph-star" style="color:#F2A03D;font-size:12px;"></i>{{ p.ratingText }} · {{ p.unit }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                      <span style="font-weight:800;font-size:16px;color:#15723F;">{{ p.priceText }}</span>
+                      <button onClick="{{ p.add }}" style="width:34px;height:34px;border-radius:11px;background:#1B8A4F;border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ false }}"></sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ DETALHE DO PRODUTO ============ -->
+    <sc-if value="{{ scr_product }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div class="app-scroll" style="flex:1;overflow-y:auto;">
+          <div style="position:relative;height:260px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 11px,transparent 11px 22px),linear-gradient(135deg,#F7E8CF,#F1D8B6);">
+            <i class="{{ sel.iconClass }}" style="font-size:96px;color:rgba(180,120,40,.5);"></i>
+            <button onClick="{{ back }}" style="position:absolute;top:18px;left:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+            <button onClick="{{ sel.toggleFav }}" style="position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;color:#E8482B;display:flex;align-items:center;justify-content:center;">
+              <sc-if value="{{ sel.fav }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-heart"></i></sc-if>
+              <sc-if value="{{ sel.notFav }}" hint-placeholder-val="{{ true }}"><i class="ph ph-heart"></i></sc-if>
+            </button>
+            <span style="position:absolute;bottom:14px;left:18px;font-family:'Plus Jakarta Sans';font-size:11px;letter-spacing:.5px;color:rgba(120,80,20,.55);background:rgba(255,255,255,.6);padding:4px 9px;border-radius:7px;">FOTO DO PRODUTO</span>
+          </div>
+          <div style="padding:22px 22px 18px;">
+            <sc-if value="{{ sel.tag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;background:#EAF6EE;color:#15723F;font-size:12px;font-weight:700;padding:5px 11px;border-radius:8px;margin-bottom:10px;">{{ sel.tag }}</span></sc-if>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;line-height:1.1;">{{ sel.name }}</div>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:9px;font-size:13px;color:#6B675F;"><span style="display:flex;align-items:center;gap:4px;"><i class="ph-fill ph-star" style="color:#F2A03D;"></i> {{ sel.ratingText }}</span><span>{{ sel.soldText }}</span></div>
+            <div style="font-size:23px;font-weight:800;color:#15723F;margin-top:14px;">{{ sel.priceText }} <span style="font-size:13px;font-weight:600;color:#A39C90;">/ {{ sel.unit }}</span></div>
+            <div style="font-size:15px;color:#4D483F;line-height:1.6;margin-top:16px;">{{ sel.desc }}</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;margin:22px 0 10px;">Especificações</div>
+            <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;overflow:hidden;">
+              <sc-for list="{{ specs }}" as="sp" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid #F4EEE1;font-size:14px;"><span style="color:#A39C90;">{{ sp.k }}</span><span style="font-weight:600;text-align:right;">{{ sp.v }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 20px 20px;border-top:1px solid #EFE8DA;background:#FBF7EF;display:flex;align-items:center;gap:14px;">
+          <div style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #E7DECB;border-radius:13px;padding:8px 12px;">
+            <button onClick="{{ decDetail }}" style="width:30px;height:30px;border-radius:9px;border:none;background:#F3ECDD;cursor:pointer;font-size:17px;color:#1B8A4F;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-minus"></i></button>
+            <span style="font-weight:700;font-size:17px;min-width:18px;text-align:center;">{{ detailQty }}</span>
+            <button onClick="{{ incDetail }}" style="width:30px;height:30px;border-radius:9px;border:none;background:#1B8A4F;cursor:pointer;font-size:17px;color:#fff;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-plus"></i></button>
+          </div>
+          <button onClick="{{ addDetail }}" style="flex:1;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">Adicionar · {{ detailTotalText }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CARRINHO ============ -->
+    <sc-if value="{{ scr_cart }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:24px 22px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #EFE8DA;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Meu carrinho</div>
+        </div>
+        <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ true }}">
+          <div class="app-scroll" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ cartItems }}" as="it" hint-placeholder-count="3">
+              <div style="display:flex;gap:13px;background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:12px;">
+                <div style="width:62px;height:62px;border-radius:12px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;font-size:26px;color:rgba(180,120,40,.55);flex-shrink:0;"><i class="{{ it.iconClass }}"></i></div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-weight:700;font-size:15px;line-height:1.2;">{{ it.name }}</div>
+                  <div style="font-size:12px;color:#A39C90;margin-top:2px;">{{ it.unit }}</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:9px;">
+                    <span style="font-weight:800;color:#15723F;">{{ it.lineText }}</span>
+                    <div style="display:flex;align-items:center;gap:11px;">
+                      <button onClick="{{ it.dec }}" style="width:28px;height:28px;border-radius:8px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:15px;color:#1B8A4F;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-minus"></i></button>
+                      <span style="font-weight:700;min-width:16px;text-align:center;">{{ it.qty }}</span>
+                      <button onClick="{{ it.inc }}" style="width:28px;height:28px;border-radius:8px;border:none;background:#1B8A4F;cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;gap:10px;background:#EAF6EE;border-radius:14px;padding:14px;color:#15723F;font-size:13px;margin-top:4px;"><i class="ph-fill ph-moped" style="font-size:22px;"></i> Entrega grátis dentro do condomínio Montblanc.</div>
+          </div>
+          <div style="padding:16px 22px 22px;border-top:1px solid #EFE8DA;background:#FBF7EF;">
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:#6B675F;margin-bottom:6px;"><span>Subtotal</span><span>{{ subtotalText }}</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:14px;color:#6B675F;margin-bottom:12px;"><span>Entrega</span><span style="color:#15723F;font-weight:700;">Grátis</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:19px;font-weight:800;margin-bottom:14px;"><span>Total</span><span style="color:#15723F;">{{ totalText }}</span></div>
+            <button onClick="{{ goCheckout }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;">Ir para pagamento</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasCart }}" hint-placeholder-val="{{ false }}"></sc-if>
+        <sc-if value="{{ cartCount }}" hint-placeholder-val="{{ true }}"></sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ============ CHECKOUT ============ -->
+    <sc-if value="{{ scr_checkout }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:24px 22px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #EFE8DA;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Pagamento</div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:18px 22px;">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;">Entregar em</div>
+          <div style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #F0E9DB;border-radius:14px;padding:15px;margin-bottom:22px;"><div style="width:42px;height:42px;border-radius:11px;background:#EAF6EE;display:flex;align-items:center;justify-content:center;color:#1B8A4F;font-size:20px;"><i class="ph ph-house"></i></div><div><div style="font-weight:700;">Apartamento {{ apartment }}</div><div style="font-size:13px;color:#A39C90;">Cond. Montblanc · entrega grátis</div></div></div>
+
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;">Forma de pagamento</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button onClick="{{ payPix.select }}" style="{{ payPix.style }}"><i class="ph-fill ph-qr-code" style="font-size:24px;color:#1B8A4F;"></i><div style="flex:1;"><div style="font-weight:700;">Pix</div><div style="font-size:12px;color:#A39C90;">Aprovação na hora</div></div><sc-if value="{{ payPix.selected }}" hint-placeholder-val="{{ true }}"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i></sc-if></button>
+            <button onClick="{{ payCard.select }}" style="{{ payCard.style }}"><i class="ph ph-credit-card" style="font-size:24px;color:#1B8A4F;"></i><div style="flex:1;"><div style="font-weight:700;">Cartão na entrega</div><div style="font-size:12px;color:#A39C90;">Crédito ou débito</div></div><sc-if value="{{ payCard.selected }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i></sc-if></button>
+            <button onClick="{{ payCash.select }}" style="{{ payCash.style }}"><i class="ph ph-money" style="font-size:24px;color:#1B8A4F;"></i><div style="flex:1;"><div style="font-weight:700;">Dinheiro</div><div style="font-size:12px;color:#A39C90;">Pague na entrega</div></div><sc-if value="{{ payCash.selected }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i></sc-if></button>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:19px;font-weight:800;margin-top:26px;"><span>Total</span><span style="color:#15723F;">{{ totalText }}</span></div>
+        </div>
+        <div style="padding:14px 22px 22px;border-top:1px solid #EFE8DA;background:#FBF7EF;">
+          <button onClick="{{ placeOrder }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;">Confirmar pedido</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ ACOMPANHAR PEDIDO ============ -->
+    <sc-if value="{{ scr_tracking }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:24px 22px 14px;border-bottom:1px solid #EFE8DA;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Acompanhar pedido</div><div style="font-size:13px;color:#A39C90;margin-top:3px;">Pedido #2847 · Loja 608</div></div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:22px;">
+          <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);border-radius:20px;padding:24px;color:#fff;margin-bottom:24px;text-align:center;">
+            <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;animation:pulse 2s infinite;"><i class="ph-fill ph-moped"></i></div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;">{{ orderEta }}</div>
+            <div style="font-size:13px;opacity:.85;margin-top:4px;">Entrega no apartamento {{ apartment }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;">
+            <sc-for list="{{ trackSteps }}" as="t" hint-placeholder-count="4">
+              <div style="display:flex;gap:15px;">
+                <div style="display:flex;flex-direction:column;align-items:center;">
+                  <div style="{{ t.dotStyle }}"><i class="{{ t.iconClass }}"></i></div>
+                  <div style="{{ t.lineStyle }}"></div>
+                </div>
+                <div style="{{ t.labelStyle }}padding-top:9px;padding-bottom:14px;">{{ t.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <button onClick="{{ goChat }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:8px;"><i class="ph ph-chat-circle-dots" style="font-size:20px;color:#1B8A4F;"></i> Falar com a Loja 608</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ HISTÓRICO / PEDIDOS ============ -->
+    <sc-if value="{{ scr_history }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:26px 22px 14px;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Meus pedidos</div></div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:6px 20px 20px;display:flex;flex-direction:column;gap:13px;">
+          <div onClick="{{ goChat }}" style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;cursor:pointer;">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:700;">Pedido #2847</span><span style="background:#EAF6EE;color:#15723F;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;">Em entrega</span></div>
+            <div style="font-size:13px;color:#A39C90;margin-top:6px;">Hoje, 19:42 · 2 itens · Macarrão Caseiro, Lasanha</div>
+            <div style="font-weight:800;color:#15723F;margin-top:8px;">R$ 50,00</div>
+          </div>
+          <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:700;">Pedido #2790</span><span style="background:#F3ECDD;color:#6B675F;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;">Entregue</span></div>
+            <div style="font-size:13px;color:#A39C90;margin-top:6px;">22 jun, 20:15 · 3 itens · Refrigerante, Água, Chocolate</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;"><span style="font-weight:800;color:#15723F;">R$ 21,90</span><button style="background:#EAF6EE;color:#15723F;border:none;border-radius:10px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;">Pedir de novo</button></div>
+          </div>
+          <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:700;">Pedido #2701</span><span style="background:#F3ECDD;color:#6B675F;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;">Entregue</span></div>
+            <div style="font-size:13px;color:#A39C90;margin-top:6px;">18 jun, 13:05 · 1 item · Brigadeiro Gourmet</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;"><span style="font-weight:800;color:#15723F;">R$ 22,00</span><button style="background:#EAF6EE;color:#15723F;border:none;border-radius:10px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;">Pedir de novo</button></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CHAT ============ -->
+    <sc-if value="{{ scr_chat }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:22px 20px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #EFE8DA;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="width:42px;height:42px;border-radius:12px;background:#EAF6EE;display:flex;align-items:center;justify-content:center;color:#1B8A4F;font-size:20px;"><i class="ph-fill ph-storefront"></i></div>
+          <div><div style="font-weight:700;">Loja 608</div><div style="font-size:12px;color:#1B8A4F;display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#1B8A4F;"></span>Online agora</div></div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;background:#F6F0E4;">
+          <sc-for list="{{ chat }}" as="m" hint-placeholder-count="2">
+            <div style="{{ m.style }}">{{ m.text }}</div>
+          </sc-for>
+        </div>
+        <div style="padding:12px 16px 18px;border-top:1px solid #EFE8DA;display:flex;gap:10px;align-items:center;">
+          <input value="{{ chatInput }}" onInput="{{ onChatInput }}" placeholder="Escreva uma mensagem..." style="flex:1;border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:15px;">
+          <button onClick="{{ sendChat }}" style="width:48px;height:48px;border-radius:13px;background:#1B8A4F;border:none;color:#fff;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph-fill ph-paper-plane-right"></i></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ FAVORITOS ============ -->
+    <sc-if value="{{ scr_favorites }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:26px 22px 12px;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Favoritos</div></div>
+        <sc-if value="{{ hasFavs }}" hint-placeholder-val="{{ true }}">
+          <div class="app-scroll" style="flex:1;overflow-y:auto;padding:8px 18px 18px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;">
+            <sc-for list="{{ favProducts }}" as="p" hint-placeholder-count="2">
+              <div onClick="{{ p.open }}" style="background:#fff;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 4px 14px rgba(60,45,15,.06);border:1px solid #F0E9DB;">
+                <div style="position:relative;height:112px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 9px,transparent 9px 18px),linear-gradient(135deg,#F7E8CF,#F1D8B6);">
+                  <i class="{{ p.iconClass }}" style="font-size:42px;color:rgba(180,120,40,.55);"></i>
+                  <button onClick="{{ p.toggleFav }}" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;color:#E8482B;"><i class="ph-fill ph-heart"></i></button>
+                </div>
+                <div style="padding:11px 12px 13px;">
+                  <div style="font-weight:700;font-size:14px;line-height:1.25;min-height:35px;">{{ p.name }}</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+                    <span style="font-weight:800;font-size:16px;color:#15723F;">{{ p.priceText }}</span>
+                    <button onClick="{{ p.add }}" style="width:34px;height:34px;border-radius:11px;background:#1B8A4F;border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-plus"></i></button>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div></div>
+        </sc-if>
+        <sc-if value="{{ hasFavs }}" hint-placeholder-val="{{ false }}"></sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ============ VENDER / ADICIONAR PRODUTO (MASTER 608) ============ -->
+    <sc-if value="{{ scr_addProduct }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:24px 22px;color:#fff;">
+          <div style="font-size:12px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR · APTO 608</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:23px;font-weight:800;margin-top:3px;">Adicionar produto</div>
+          <div style="display:flex;gap:10px;margin-top:14px;">
+            <div style="flex:1;background:rgba(255,255,255,.14);border-radius:13px;padding:12px;"><div style="font-size:21px;font-weight:800;">{{ productsCount }}</div><div style="font-size:12px;opacity:.85;">produtos ativos</div></div>
+            <button onClick="{{ goCats }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;display:flex;align-items:center;gap:6px;"><i class="ph ph-squares-four"></i></div><div style="font-size:12px;opacity:.85;margin-top:2px;">Gerenciar categorias</div></button>
+          </div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:15px;">
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Nome do produto</label><input value="{{ form.name }}" onInput="{{ fName }}" placeholder="Ex: Lasanha à bolonhesa" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;"><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Preço (R$)</label><input value="{{ form.price }}" onInput="{{ fPrice }}" inputmode="decimal" placeholder="0,00" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+            <div style="flex:1;"><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Unidade</label><input value="{{ form.unit }}" onInput="{{ fUnit }}" placeholder="Ex: Porção 500g" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;"></div>
+          </div>
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Categoria</label>
+            <select value="{{ form.cat }}" onChange="{{ fCat }}" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:16px;width:100%;color:#1C1A17;">
+              <sc-for list="{{ categories }}" as="c" hint-placeholder-count="5"><option value="{{ c }}">{{ c }}</option></sc-for>
+            </select>
+          </div>
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Descrição</label><textarea value="{{ form.desc }}" onInput="{{ fDesc }}" rows="3" placeholder="Conte os detalhes, ingredientes, porções..." style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:15px;width:100%;resize:none;line-height:1.5;"></textarea></div>
+          <div><label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Foto do produto</label>
+            <div style="border:2px dashed #DDD3BF;border-radius:14px;padding:26px;text-align:center;color:#A39C90;background:#FCFAF4;"><i class="ph ph-image" style="font-size:30px;"></i><div style="font-size:13px;margin-top:6px;">Toque para enviar uma foto</div></div>
+          </div>
+          <button onClick="{{ saveProduct }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph-bold ph-check"></i> Publicar produto</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ GERENCIAR CATEGORIAS (MASTER) ============ -->
+    <sc-if value="{{ scr_categories }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:24px 22px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #EFE8DA;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Categorias</div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:18px 22px;">
+          <div style="display:flex;gap:10px;margin-bottom:18px;">
+            <input value="{{ newCat }}" onInput="{{ onNewCat }}" placeholder="Nova categoria" style="flex:1;border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:14px;font-size:15px;">
+            <button onClick="{{ addCategory }}" style="background:#1B8A4F;color:#fff;border:none;border-radius:13px;padding:0 18px;font-weight:700;cursor:pointer;font-size:15px;display:flex;align-items:center;gap:6px;"><i class="ph-bold ph-plus"></i> Criar</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ catList }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #F0E9DB;border-radius:14px;padding:15px 16px;">
+                <div style="display:flex;align-items:center;gap:12px;"><div style="width:40px;height:40px;border-radius:11px;background:#EAF6EE;display:flex;align-items:center;justify-content:center;color:#1B8A4F;font-size:18px;"><i class="ph ph-tag"></i></div><div><div style="font-weight:700;">{{ c.name }}</div><div style="font-size:12px;color:#A39C90;">{{ c.count }} produtos</div></div></div>
+                <button onClick="{{ c.remove }}" style="width:38px;height:38px;border-radius:10px;border:1px solid #F0DAD3;background:#FCF2EF;color:#E8482B;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-trash"></i></button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ PERFIL ============ -->
+    <sc-if value="{{ scr_profile }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div class="app-scroll" style="flex:1;overflow-y:auto;">
+          <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:34px 24px 28px;color:#fff;text-align:center;">
+            <div style="width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 12px;"><i class="ph-fill ph-user"></i></div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;">Morador Montblanc</div>
+            <div style="font-size:13px;opacity:.85;margin-top:3px;">Apartamento {{ apartment }}</div>
+          </div>
+          <div style="padding:18px 22px;">
+            <sc-if value="{{ isMaster }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#EAF6EE;border:1px solid #CDE9D7;border-radius:16px;padding:18px;margin-bottom:18px;">
+                <div style="display:flex;align-items:center;gap:8px;color:#15723F;font-weight:700;font-size:14px;margin-bottom:12px;"><i class="ph-fill ph-storefront"></i> Você é o vendedor da Loja 608</div>
+                <div style="display:flex;gap:10px;">
+                  <button onClick="{{ goAdd }}" style="flex:1;background:#1B8A4F;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;"><i class="ph-bold ph-plus"></i> Produto</button>
+                  <button onClick="{{ goCats }}" style="flex:1;background:#fff;color:#15723F;border:1px solid #CDE9D7;border-radius:12px;padding:13px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;"><i class="ph ph-tag"></i> Categorias</button>
+                </div>
+              </div>
+            </sc-if>
+            <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;overflow:hidden;">
+              <div onClick="{{ goFav }}" style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;cursor:pointer;"><i class="ph ph-heart" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Favoritos</span><i class="ph ph-caret-right" style="color:#C9C2B4;"></i></div>
+              <div onClick="{{ goHist }}" style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;cursor:pointer;"><i class="ph ph-receipt" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Histórico de pedidos</span><i class="ph ph-caret-right" style="color:#C9C2B4;"></i></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;"><i class="ph ph-bell" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Notificações</span><span style="width:42px;height:24px;border-radius:13px;background:#1B8A4F;position:relative;"><span style="position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:#fff;"></span></span></div>
+              <div style="display:flex;align-items:center;gap:13px;padding:16px;border-bottom:1px solid #F4EEE1;"><i class="ph ph-house" style="font-size:21px;color:#1B8A4F;width:24px;"></i><span style="flex:1;font-weight:600;">Meu apartamento</span><span style="color:#A39C90;font-weight:600;">{{ apartment }}</span></div>
+              <div onClick="{{ logout }}" style="display:flex;align-items:center;gap:13px;padding:16px;cursor:pointer;"><i class="ph ph-sign-out" style="font-size:21px;color:#E8482B;width:24px;"></i><span style="flex:1;font-weight:600;color:#E8482B;">Sair</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ TAB BAR ============ -->
+    <sc-if value="{{ showTabBar }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;background:#fff;border-top:1px solid #EFE8DA;padding:5px 6px;padding-bottom:max(5px,env(safe-area-inset-bottom));flex-shrink:0;box-shadow:0 -3px 16px rgba(60,45,15,.05);">
+        <sc-for list="{{ tabItems }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.go }}" style="{{ t.style }}"><i class="{{ t.iconClass }}" style="font-size:23px;"></i>{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ============ TOAST ============ -->
+    <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1C1A17;color:#fff;padding:13px 20px;border-radius:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px;z-index:50;box-shadow:0 8px 26px rgba(0,0,0,.28);animation:toastIn .3s ease;white-space:nowrap;"><i class="{{ toast.iconClass }}" style="font-size:20px;color:#7DF0A6;"></i>{{ toast.text }}</div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:440,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'login',
+    nav: ['login'],
+    isMaster: false,
+    apartment: '',
+    name: '',
+    query: '',
+    activeCat: 'Todos',
+    selectedId: 'p4',
+    detailQty: 1,
+    cart: {},
+    favorites: { p5: true, p10: true },
+    orderStep: 0,
+    toast: null,
+    form: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '' },
+    newCat: '',
+    chat: [{ from: 'seller', text: 'Ola! Aqui e da Loja 608. Posso ajudar com o seu pedido?' }],
+    chatInput: '',
+    payment: 'pix',
+    apartments: ['101', '102', '203', '305', '402', '507', '608', '609', '704', '810', '1102'],
+    categories: ['Bebidas', 'Massas', 'Perecíveis', 'Água', 'Chocolates'],
+    products: [
+      { id: 'p1', name: 'Refrigerante Cola 2L', cat: 'Bebidas', price: 9.9, unit: 'Garrafa 2L', icon: 'ph-bottle', desc: 'Refrigerante de cola, servido sempre gelado. Ideal para acompanhar a refeição em família.', rating: 4.8, sold: 132, tag: 'Mais vendido' },
+      { id: 'p2', name: 'Guaraná Lata 350ml', cat: 'Bebidas', price: 4.5, unit: 'Lata 350ml', icon: 'ph-bottle', desc: 'Guaraná gelado em lata individual.', rating: 4.7, sold: 98, tag: '' },
+      { id: 'p3', name: 'Suco de Laranja 1L', cat: 'Bebidas', price: 12, unit: 'Garrafa 1L', icon: 'ph-orange-slice', desc: 'Suco natural de laranja espremido na hora, sem conservantes.', rating: 4.9, sold: 54, tag: 'Natural' },
+      { id: 'p4', name: 'Macarrão Caseiro 500g', cat: 'Massas', price: 18, unit: 'Porção 500g', icon: 'ph-bowl-food', desc: 'Massa fresca caseira, feita com ovos e farinha selecionada. Cozinha em 3 minutos.', rating: 5, sold: 76, tag: 'Da casa' },
+      { id: 'p5', name: 'Lasanha à Bolonhesa', cat: 'Massas', price: 32, unit: 'Travessa 800g', icon: 'ph-bowl-food', desc: 'Lasanha congelada à bolonhesa com molho artesanal e muito queijo. Serve até 2 pessoas, é só aquecer.', rating: 4.9, sold: 64, tag: 'Congelado' },
+      { id: 'p6', name: 'Nhoque da Nonna 600g', cat: 'Massas', price: 24, unit: 'Porção 600g', icon: 'ph-bowl-food', desc: 'Nhoque de batata feito à mão, receita de família.', rating: 5, sold: 41, tag: '' },
+      { id: 'p7', name: 'Água Mineral 1,5L', cat: 'Água', price: 3.5, unit: 'Garrafa 1,5L', icon: 'ph-drop', desc: 'Água mineral natural sem gás.', rating: 4.6, sold: 210, tag: '' },
+      { id: 'p8', name: 'Água com Gás 500ml', cat: 'Água', price: 4, unit: 'Garrafa 500ml', icon: 'ph-drop', desc: 'Água mineral com gás, geladinha.', rating: 4.5, sold: 88, tag: '' },
+      { id: 'p9', name: 'Chocolate ao Leite 90g', cat: 'Chocolates', price: 8.5, unit: 'Barra 90g', icon: 'ph-cookie', desc: 'Chocolate ao leite cremoso.', rating: 4.8, sold: 120, tag: '' },
+      { id: 'p10', name: 'Brigadeiro Gourmet (6un)', cat: 'Chocolates', price: 22, unit: 'Caixa com 6', icon: 'ph-cookie', desc: 'Brigadeiros gourmet feitos com chocolate belga. Embalagem para presente.', rating: 5, sold: 73, tag: 'Novo' },
+      { id: 'p11', name: 'Queijo Minas 500g', cat: 'Perecíveis', price: 28, unit: 'Peça 500g', icon: 'ph-egg', desc: 'Queijo minas frescal artesanal.', rating: 4.9, sold: 35, tag: '' },
+      { id: 'p12', name: 'Iogurte Natural 500g', cat: 'Perecíveis', price: 11, unit: 'Pote 500g', icon: 'ph-egg', desc: 'Iogurte natural integral, sem açúcar.', rating: 4.7, sold: 47, tag: '' }
+    ]
+  };
+
+  brl(n) { return 'R$ ' + Number(n).toFixed(2).replace('.', ','); }
+
+  go = (s) => this.setState(st => ({ screen: s, nav: [...st.nav, s] }));
+  back = () => this.setState(st => { const n = st.nav.slice(0, -1); return { nav: n, screen: n[n.length - 1] || 'home' }; });
+  tab = (s) => this.setState(st => ({ screen: s, nav: [s] }));
+
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._tt); }
+
+  showToast = (iconClass, text) => {
+    this.setState({ toast: { iconClass, text } });
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => this.setState({ toast: null }), 2600);
+  };
+
+  prod = (id) => this.state.products.find(p => p.id === id);
+  openProduct = (id) => this.setState({ selectedId: id, detailQty: 1 }, () => this.go('product'));
+
+  addToCart = (id, qty = 1) => {
+    this.setState(st => ({ cart: { ...st.cart, [id]: (st.cart[id] || 0) + qty } }));
+    this.showToast('ph-fill ph-check-circle', 'Adicionado ao carrinho');
+  };
+  changeQty = (id, d) => this.setState(st => {
+    const q = (st.cart[id] || 0) + d; const c = { ...st.cart };
+    if (q <= 0) delete c[id]; else c[id] = q; return { cart: c };
+  });
+  removeFromCart = (id) => this.setState(st => { const c = { ...st.cart }; delete c[id]; return { cart: c }; });
+
+  toggleFav = (id) => this.setState(st => {
+    const f = { ...st.favorites };
+    if (f[id]) delete f[id]; else f[id] = true;
+    return { favorites: f };
+  });
+
+  selectApt = (n) => this.setState({ apartment: n, isMaster: n === '608' });
+
+  placeOrder = () => {
+    this.setState({ orderStep: 0 });
+    this.go('tracking');
+    clearInterval(this._t);
+    this._t = setInterval(() => {
+      this.setState(st => {
+        const next = Math.min(st.orderStep + 1, 3);
+        if (next >= 3) clearInterval(this._t);
+        return { orderStep: next };
+      }, () => {
+        if (this.state.orderStep === 2) this.showToast('ph-fill ph-moped', 'Seu pedido saiu para entrega!');
+      });
+    }, 2400);
+  };
+
+  saveProduct = () => {
+    const f = this.state.form;
+    if (!f.name.trim() || !f.price) { this.showToast('ph-fill ph-warning-circle', 'Preencha nome e preço'); return; }
+    const np = { id: 'np' + Date.now(), name: f.name.trim(), cat: f.cat, price: parseFloat(String(f.price).replace(',', '.')) || 0, unit: f.unit || 'Unidade', icon: 'ph-package', desc: f.desc || 'Produto da Loja 608.', rating: 5, sold: 0, tag: 'Novo' };
+    this.setState(st => ({ products: [np, ...st.products], form: { name: '', price: '', cat: st.categories[0] || 'Bebidas', desc: '', unit: '' } }));
+    this.showToast('ph-fill ph-check-circle', 'Produto publicado na loja!');
+    this.tab('home');
+  };
+
+  addCategory = () => {
+    const c = this.state.newCat.trim();
+    if (!c) return;
+    this.setState(st => st.categories.includes(c) ? { newCat: '' } : { categories: [...st.categories, c], newCat: '' });
+    this.showToast('ph-fill ph-check-circle', 'Categoria criada');
+  };
+  removeCategory = (c) => this.setState(st => ({ categories: st.categories.filter(x => x !== c) }));
+
+  sendChat = () => {
+    const t = this.state.chatInput.trim();
+    if (!t) return;
+    this.setState(st => ({ chat: [...st.chat, { from: 'me', text: t }], chatInput: '' }));
+    setTimeout(() => this.setState(st => ({ chat: [...st.chat, { from: 'seller', text: 'Perfeito! Já estou separando aqui no 608. 👍' }] })), 1200);
+  };
+
+  set = (k) => (e) => this.setState({ [k]: e.target.value });
+  setForm = (k) => (e) => this.setState(st => ({ form: { ...st.form, [k]: e.target.value } }));
+
+  chipStyle(active) {
+    return { padding: '9px 16px', borderRadius: '999px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit', border: active ? '1px solid #1B8A4F' : '1px solid #E7DECB', background: active ? '#1B8A4F' : '#fff', color: active ? '#fff' : '#5C574E' };
+  }
+  tabStyle(active) {
+    return { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '11px', fontWeight: 600, padding: '6px 0', color: active ? '#1B8A4F' : '#A39C90' };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const scr = (x) => s.screen === x;
+    const map = (p) => ({
+      id: p.id, name: p.name, unit: p.unit, priceText: this.brl(p.price), tag: p.tag,
+      iconClass: 'ph ' + p.icon, fav: !!s.favorites[p.id], notFav: !s.favorites[p.id], ratingText: p.rating.toFixed(1),
+      open: () => this.openProduct(p.id),
+      add: (e) => { e.stopPropagation(); this.addToCart(p.id); },
+      toggleFav: (e) => { e.stopPropagation(); this.toggleFav(p.id); }
+    });
+
+    let list = s.products;
+    if (s.activeCat !== 'Todos') list = list.filter(p => p.cat === s.activeCat);
+    if (s.query.trim()) { const q = s.query.toLowerCase(); list = list.filter(p => p.name.toLowerCase().includes(q)); }
+    const filtered = list.map(map);
+    const favProducts = s.products.filter(p => s.favorites[p.id]).map(map);
+
+    const catChips = ['Todos', ...s.categories].map(c => ({
+      name: c, active: s.activeCat === c, style: this.chipStyle(s.activeCat === c),
+      select: () => this.setState({ activeCat: c })
+    }));
+
+    const cartIds = Object.keys(s.cart);
+    const cartItems = cartIds.map(id => {
+      const p = this.prod(id); const qty = s.cart[id];
+      return {
+        id, name: p.name, unit: p.unit, qty, iconClass: 'ph ' + p.icon,
+        lineText: this.brl(p.price * qty),
+        inc: () => this.changeQty(id, 1), dec: () => this.changeQty(id, -1), remove: () => this.removeFromCart(id)
+      };
+    });
+    const cartCount = cartIds.reduce((a, id) => a + s.cart[id], 0);
+    const subtotal = cartIds.reduce((a, id) => a + this.prod(id).price * s.cart[id], 0);
+
+    const sel = this.prod(s.selectedId) || s.products[0];
+    const specs = [
+      { k: 'Categoria', v: sel.cat },
+      { k: 'Unidade', v: sel.unit },
+      { k: 'Vendedor', v: 'Apartamento 608 · Loja oficial' },
+      { k: 'Avaliação', v: sel.rating.toFixed(1) + ' de 5' }
+    ];
+
+    const catList = s.categories.map(c => ({
+      name: c, count: s.products.filter(p => p.cat === c).length, remove: () => this.removeCategory(c)
+    }));
+
+    const aptList = s.apartments.map(n => ({
+      n, isStore: n === '608', selected: s.apartment === n,
+      select: () => this.selectApt(n),
+      style: {
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', width: '100%',
+        padding: '16px 18px', borderRadius: '14px', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+        border: s.apartment === n ? '2px solid #1B8A4F' : '1px solid #E7DECB',
+        background: s.apartment === n ? '#EAF6EE' : '#fff'
+      }
+    }));
+
+    const tabs = [
+      { key: 'home', label: 'Início', icon: 'ph-house', active: ['home', 'product'].includes(s.screen) },
+      { key: 'favorites', label: 'Favoritos', icon: 'ph-heart', active: scr('favorites') },
+      { key: 'history', label: 'Pedidos', icon: 'ph-receipt', active: ['history', 'tracking'].includes(s.screen) }
+    ];
+    if (s.isMaster) tabs.push({ key: 'addProduct', label: 'Vender', icon: 'ph-storefront', active: ['addProduct', 'categories'].includes(s.screen) });
+    tabs.push({ key: 'profile', label: 'Perfil', icon: 'ph-user', active: scr('profile') });
+    const tabItems = tabs.map(t => ({
+      label: t.label, iconClass: (t.active ? 'ph-fill ' : 'ph ') + t.icon,
+      style: this.tabStyle(t.active), go: () => this.tab(t.key)
+    }));
+
+    const steps = ['Pedido confirmado', 'Preparando seu pedido', 'Saiu para entrega', 'Entregue no seu apê'];
+    const stepIcons = ['ph-check-circle', 'ph-cooking-pot', 'ph-moped', 'ph-house'];
+    const trackSteps = steps.map((label, i) => ({
+      label, done: i <= s.orderStep, active: i === s.orderStep,
+      iconClass: (i <= s.orderStep ? 'ph-fill ' : 'ph ') + stepIcons[i],
+      dotStyle: {
+        width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '20px',
+        background: i <= s.orderStep ? '#1B8A4F' : '#fff', color: i <= s.orderStep ? '#fff' : '#C9C2B4',
+        border: i <= s.orderStep ? 'none' : '2px solid #E7DECB'
+      },
+      lineStyle: { width: '2px', flex: 1, minHeight: '22px', background: i < s.orderStep ? '#1B8A4F' : '#E7DECB' },
+      labelStyle: { fontSize: '15px', fontWeight: i === s.orderStep ? 700 : 600, color: i <= s.orderStep ? '#1C1A17' : '#A39C90' }
+    }));
+
+    const orderEta = ['Aguardando confirmação...', 'Pronto em ~15 min', 'Chega em poucos minutos', 'Pedido entregue. Bom apetite!'][s.orderStep];
+
+    const chat = s.chat.map((m, i) => ({
+      text: m.text, mine: m.from === 'me',
+      style: {
+        maxWidth: '78%', padding: '11px 15px', borderRadius: '18px', fontSize: '15px', lineHeight: 1.4,
+        alignSelf: m.from === 'me' ? 'flex-end' : 'flex-start',
+        background: m.from === 'me' ? '#1B8A4F' : '#fff',
+        color: m.from === 'me' ? '#fff' : '#1C1A17',
+        borderBottomRightRadius: m.from === 'me' ? '4px' : '18px',
+        borderBottomLeftRadius: m.from === 'me' ? '18px' : '4px',
+        border: m.from === 'me' ? 'none' : '1px solid #EFE8DA'
+      }
+    }));
+
+    const payOpt = (key) => ({ selected: s.payment === key, select: () => this.setState({ payment: key }),
+      style: { display: 'flex', alignItems: 'center', gap: '14px', width: '100%', padding: '16px', borderRadius: '14px', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+        border: s.payment === key ? '2px solid #1B8A4F' : '1px solid #E7DECB', background: s.payment === key ? '#EAF6EE' : '#fff' } });
+
+    return {
+      scr_login: scr('login'), scr_register: scr('register'), scr_apt: scr('apt'),
+      scr_home: scr('home'), scr_product: scr('product'), scr_cart: scr('cart'),
+      scr_checkout: scr('checkout'), scr_tracking: scr('tracking'), scr_history: scr('history'),
+      scr_profile: scr('profile'), scr_addProduct: scr('addProduct'), scr_categories: scr('categories'),
+      scr_chat: scr('chat'), scr_favorites: scr('favorites'),
+      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories'].includes(s.screen),
+      tabItems, toast: s.toast,
+      apartment: s.apartment, isMaster: s.isMaster, aptCanContinue: !!s.apartment, aptList,
+      name: s.name, query: s.query,
+      filtered, hasResults: filtered.length > 0, favProducts, hasFavs: favProducts.length > 0,
+      catChips, catList, categories: s.categories,
+      sel: { name: sel.name, priceText: this.brl(sel.price), unit: sel.unit, desc: sel.desc, ratingText: sel.rating.toFixed(1), soldText: sel.sold + ' vendidos', iconClass: 'ph ' + sel.icon, tag: sel.tag, fav: !!s.favorites[sel.id], notFav: !s.favorites[sel.id], toggleFav: () => this.toggleFav(sel.id) },
+      specs, detailQty: s.detailQty,
+      incDetail: () => this.setState(st => ({ detailQty: st.detailQty + 1 })),
+      decDetail: () => this.setState(st => ({ detailQty: Math.max(1, st.detailQty - 1) })),
+      addDetail: () => this.addToCart(s.selectedId, s.detailQty),
+      detailTotalText: this.brl(sel.price * s.detailQty),
+      cartItems, cartCount, hasCart: cartItems.length > 0,
+      subtotalText: this.brl(subtotal), totalText: this.brl(subtotal),
+      cartBadge: cartCount > 0 ? String(cartCount) : '',
+      form: s.form, newCat: s.newCat, productsCount: s.products.length,
+      chat, chatInput: s.chatInput,
+      trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
+      payPix: payOpt('pix'), payCard: payOpt('card'), payCash: payOpt('cash'),
+      go: this.go, back: this.back, tabGo: this.tab,
+      doLogin: () => this.go('apt'), doRegister: () => this.go('apt'), goRegister: () => this.go('register'),
+      goFav: () => this.tab('favorites'), goHist: () => this.tab('history'),
+      confirmApt: () => { if (s.apartment) this.tab('home'); },
+      openCart: () => this.go('cart'), goCheckout: () => this.go('checkout'), placeOrder: this.placeOrder,
+      goAdd: () => this.go('addProduct'), goCats: () => this.go('categories'), goChat: () => this.go('chat'),
+      saveProduct: this.saveProduct, addCategory: this.addCategory, sendChat: this.sendChat,
+      logout: () => this.tab('login'),
+      onName: this.set('name'), onQuery: this.set('query'), onNewCat: this.set('newCat'), onChatInput: this.set('chatInput'),
+      fName: this.setForm('name'), fPrice: this.setForm('price'), fUnit: this.setForm('unit'), fDesc: this.setForm('desc'),
+      fCat: this.setForm('cat')
+    };
+  }
+}
+</script>
+</body>
+</html>
