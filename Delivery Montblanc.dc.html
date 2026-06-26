@@ -22,6 +22,8 @@
   @keyframes scrIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(27,138,79,.4); } 50% { box-shadow: 0 0 0 8px rgba(27,138,79,0); } }
+  @keyframes lbIn { from { opacity: 0; transform: scale(.88); } to { opacity: 1; transform: scale(1); } }
+  @keyframes lbBgIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
 </helmet>
 
@@ -163,7 +165,7 @@
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
         <div class="app-scroll" style="flex:1;overflow-y:auto;">
           <div style="position:relative;height:260px;background:linear-gradient(135deg,#F7E8CF,#F1D8B6);display:flex;align-items:center;justify-content:center;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 11px,transparent 11px 22px),linear-gradient(135deg,#F7E8CF,#F1D8B6);overflow:hidden;">
-            <sc-if value="{{ sel.hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ sel.imageUrl }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"></sc-if>
+            <sc-if value="{{ sel.hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ sel.imageUrl }}" onClick="{{ sel.openLightbox }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:zoom-in;"></sc-if>
             <sc-if value="{{ sel.noImage }}" hint-placeholder-val="{{ true }}"><i class="{{ sel.iconClass }}" style="font-size:96px;color:rgba(180,120,40,.5);"></i></sc-if>
             <button onClick="{{ back }}" style="position:absolute;top:18px;left:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
             <button onClick="{{ sel.toggleFav }}" style="position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;color:#E8482B;display:flex;align-items:center;justify-content:center;">
@@ -430,7 +432,7 @@
             <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Foto do produto</label>
             <sc-if value="{{ editForm.hasImage }}" hint-placeholder-val="{{ false }}">
               <div style="position:relative;border-radius:16px;overflow:hidden;height:170px;background:#F5F0E8;">
-                <img src="{{ editForm.imageUrl }}" style="width:100%;height:100%;object-fit:cover;">
+                <img src="{{ editForm.imageUrl }}" onClick="{{ openEditImgLightbox }}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;">
                 <button onClick="{{ editImgTrigger }}" style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;backdrop-filter:blur(4px);"><i class="ph ph-pencil-simple"></i> Trocar foto</button>
               </div>
             </sc-if>
@@ -543,6 +545,16 @@
       <div style="position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#1C1A17;color:#fff;padding:13px 20px;border-radius:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px;z-index:50;box-shadow:0 8px 26px rgba(0,0,0,.28);animation:toastIn .3s ease;white-space:nowrap;"><i class="{{ toast.iconClass }}" style="font-size:20px;color:#7DF0A6;"></i>{{ toast.text }}</div>
     </sc-if>
 
+    <!-- ============ LIGHTBOX ============ -->
+    <sc-if value="{{ showLightbox }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;animation:lbBgIn .2s ease;">
+        <img src="{{ lightboxUrl }}" style="max-width:100%;max-height:88vh;object-fit:contain;border-radius:12px;animation:lbIn .25s cubic-bezier(.22,.68,0,1.2);box-shadow:0 24px 80px rgba(0,0,0,.6);">
+        <button onClick="{{ closeLightbox }}" style="position:absolute;top:18px;right:18px;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px);">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+    </sc-if>
+
   </div>
 </div>
 </x-dc>
@@ -571,6 +583,7 @@ class Component extends DCLogic {
     toast: null,
     form: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '' },
     editingProductId: null,
+    lightboxUrl: null,
     editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '', icon: '' },
     newCat: '',
     chat: [{ from: 'seller', text: 'Olá! Aqui é da Loja 608. Posso ajudar com o seu pedido?' }],
@@ -808,6 +821,9 @@ class Component extends DCLogic {
 
   setEditForm = (k) => (e) => this.setState(st => ({ editForm: { ...st.editForm, [k]: e.target.value } }));
 
+  openLightbox = (url) => this.setState({ lightboxUrl: url });
+  closeLightbox = () => this.setState({ lightboxUrl: null });
+
   editImgTrigger = () => { const el = document.getElementById('editImgInput'); if (el) el.click(); };
 
   onEditImgChange = (e) => {
@@ -955,7 +971,7 @@ class Component extends DCLogic {
       query: s.query,
       filtered, hasResults: filtered.length > 0, favProducts, hasFavs: favProducts.length > 0,
       catChips, catList, categories: s.categories,
-      sel: { name: sel.name, priceText: this.brl(sel.price || 0), unit: sel.unit, desc: sel.description || '', iconClass: 'ph ' + (sel.icon || 'ph-package'), tag: sel.tag || '', fav: !!s.favorites[sel.id], notFav: !s.favorites[sel.id], toggleFav: () => this.toggleFav(sel.id), hasImage: !!(sel.icon && (sel.icon.startsWith('/') || sel.icon.startsWith('http'))), noImage: !(sel.icon && (sel.icon.startsWith('/') || sel.icon.startsWith('http'))), imageUrl: sel.icon || '' },
+      sel: { name: sel.name, priceText: this.brl(sel.price || 0), unit: sel.unit, desc: sel.description || '', iconClass: 'ph ' + (sel.icon || 'ph-package'), tag: sel.tag || '', fav: !!s.favorites[sel.id], notFav: !s.favorites[sel.id], toggleFav: () => this.toggleFav(sel.id), hasImage: !!(sel.icon && (sel.icon.startsWith('/') || sel.icon.startsWith('http'))), noImage: !(sel.icon && (sel.icon.startsWith('/') || sel.icon.startsWith('http'))), imageUrl: sel.icon || '', openLightbox: () => sel.icon && this.openLightbox(sel.icon) },
       specs, detailQty: s.detailQty,
       incDetail: () => this.setState(st => ({ detailQty: st.detailQty + 1 })),
       decDetail: () => this.setState(st => ({ detailQty: Math.max(1, st.detailQty - 1) })),
@@ -975,6 +991,8 @@ class Component extends DCLogic {
       efName: this.setEditForm('name'), efPrice: this.setEditForm('price'), efUnit: this.setEditForm('unit'),
       efDesc: this.setEditForm('desc'), efCat: this.setEditForm('cat'), efTag: this.setEditForm('tag'),
       editImgTrigger: this.editImgTrigger, onEditImgChange: this.onEditImgChange,
+      openEditImgLightbox: () => s.editForm.icon && this.openLightbox(s.editForm.icon),
+      showLightbox: !!s.lightboxUrl, lightboxUrl: s.lightboxUrl || '', closeLightbox: this.closeLightbox,
       goManageProducts: () => this.go('manageProducts'),
       chat, chatInput: s.chatInput,
       trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
