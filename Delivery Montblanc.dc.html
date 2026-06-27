@@ -116,7 +116,24 @@
             <div>
               <div style="font-size:12px;opacity:.8;font-weight:600;letter-spacing:.4px;">LOJA OFICIAL · APTO 608</div>
               <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:25px;font-weight:800;margin-top:3px;">Delivery Montblanc</div>
-              <div style="display:flex;align-items:center;gap:7px;margin-top:8px;font-size:13px;"><span style="width:8px;height:8px;border-radius:50%;background:#7DF0A6;box-shadow:0 0 0 3px rgba(125,240,166,.25);"></span> Aberto agora · até 22h · entrega grátis</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+                <sc-if value="{{ storeOpen }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;align-items:center;gap:7px;font-size:13px;"><span style="width:8px;height:8px;border-radius:50%;background:#7DF0A6;box-shadow:0 0 0 3px rgba(125,240,166,.25);flex-shrink:0;"></span>Aberto agora · até 22h · entrega grátis</div>
+                </sc-if>
+                <sc-if value="{{ storeClosed }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:7px;font-size:13px;"><span style="width:8px;height:8px;border-radius:50%;background:#F87171;box-shadow:0 0 0 3px rgba(248,113,113,.25);flex-shrink:0;"></span>Fechado no momento</div>
+                </sc-if>
+                <sc-if value="{{ isMaster }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ toggleStore }}" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border:none;border-radius:20px;padding:5px 10px 5px 5px;cursor:pointer;color:#fff;font-size:12px;font-weight:700;letter-spacing:.2px;flex-shrink:0;">
+                    <sc-if value="{{ storeOpen }}" hint-placeholder-val="{{ false }}">
+                      <span style="width:32px;height:18px;border-radius:9px;background:#7DF0A6;position:relative;display:inline-flex;align-items:center;"><span style="position:absolute;right:2px;width:14px;height:14px;border-radius:50%;background:#15723F;"></span></span>Aberta
+                    </sc-if>
+                    <sc-if value="{{ storeClosed }}" hint-placeholder-val="{{ false }}">
+                      <span style="width:32px;height:18px;border-radius:9px;background:rgba(255,255,255,.3);position:relative;display:inline-flex;align-items:center;"><span style="position:absolute;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;"></span></span>Fechada
+                    </sc-if>
+                  </button>
+                </sc-if>
+              </div>
             </div>
             <button onClick="{{ openCart }}" style="position:relative;width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-shopping-bag-open"></i><sc-if value="{{ cartBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-5px;right:-5px;background:#F2A03D;color:#3a2400;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px;">{{ cartBadge }}</span></sc-if></button>
           </div>
@@ -129,6 +146,13 @@
               <button onClick="{{ c.select }}" style="{{ c.style }}">{{ c.name }}</button>
             </sc-for>
           </div>
+
+          <sc-if value="{{ storeClosed }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:12px 18px 0;background:#FEF2F2;border:1px solid #FECACA;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+              <i class="ph ph-storefront" style="font-size:26px;color:#DC2626;flex-shrink:0;"></i>
+              <div><div style="font-weight:700;font-size:14px;color:#DC2626;">Loja fechada</div><div style="font-size:12px;color:#9B2121;margin-top:2px;">Voltamos em breve. Fique de olho!</div></div>
+            </div>
+          </sc-if>
 
           <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:12px 18px 0;">
@@ -493,7 +517,7 @@
         <div class="app-scroll" style="flex:1;overflow-y:auto;">
           <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:34px 24px 28px;color:#fff;text-align:center;">
             <div style="width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 12px;"><i class="ph-fill ph-user"></i></div>
-            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;">Morador Montblanc</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;">{{ name }} Montblanc</div>
             <div style="font-size:13px;opacity:.85;margin-top:3px;">Apartamento {{ apartment }}</div>
           </div>
           <div style="padding:18px 22px;">
@@ -584,6 +608,7 @@ class Component extends DCLogic {
     form: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '' },
     editingProductId: null,
     lightboxUrl: null,
+    storeOpen: true,
     editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '', icon: '' },
     newCat: '',
     chat: [{ from: 'seller', text: 'Olá! Aqui é da Loja 608. Posso ajudar com o seu pedido?' }],
@@ -631,6 +656,7 @@ class Component extends DCLogic {
   componentDidMount() {
     this._fetch('GET', '/products').then(p => this.setState({ products: p })).catch(() => {});
     this._fetch('GET', '/categories').then(c => this.setState({ categories: c })).catch(() => {});
+    this._fetch('GET', '/store/status').then(r => this.setState({ storeOpen: r.open !== false })).catch(() => {});
   }
 
   _loadFavorites() {
@@ -729,6 +755,7 @@ class Component extends DCLogic {
   // ── orders ───────────────────────────────────────────────────────────────
 
   placeOrder = () => {
+    if (!this.state.storeOpen) { this.showToast('ph ph-storefront', 'Loja fechada no momento'); return; }
     const { userId, apartment, payment, cart } = this.state;
     const cartIds = Object.keys(cart);
     const items = cartIds.map(id => { const p = this.prod(id); return { id, qty: cart[id], price: p ? Number(p.price) : 0 }; });
@@ -823,6 +850,16 @@ class Component extends DCLogic {
 
   openLightbox = (url) => this.setState({ lightboxUrl: url });
   closeLightbox = () => this.setState({ lightboxUrl: null });
+
+  toggleStore = () => {
+    const newOpen = !this.state.storeOpen;
+    this._fetch('POST', '/store/status', { open: newOpen })
+      .then(() => {
+        this.setState({ storeOpen: newOpen });
+        this.showToast(newOpen ? 'ph-fill ph-storefront' : 'ph ph-storefront', newOpen ? 'Loja aberta!' : 'Loja fechada');
+      })
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao alterar status'));
+  };
 
   editImgTrigger = () => { const el = document.getElementById('editImgInput'); if (el) el.click(); };
 
@@ -994,6 +1031,7 @@ class Component extends DCLogic {
       openEditImgLightbox: () => s.editForm.icon && this.openLightbox(s.editForm.icon),
       showLightbox: !!s.lightboxUrl, lightboxUrl: s.lightboxUrl || '', closeLightbox: this.closeLightbox,
       goManageProducts: () => this.go('manageProducts'),
+      storeOpen: s.storeOpen, storeClosed: !s.storeOpen, toggleStore: this.toggleStore,
       chat, chatInput: s.chatInput,
       trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
       payPix: payOpt('pix'), payCard: payOpt('card'), payCash: payOpt('cash'),
