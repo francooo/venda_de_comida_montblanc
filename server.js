@@ -16,6 +16,22 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 const MASTER_EMAIL = 'andrewsfranco93@gmail.com';
 
+// Auto-migrate orders table: add status and payment_proof_url columns
+pool.query(`
+  ALTER TABLE montblanc.orders ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'created';
+  ALTER TABLE montblanc.orders ADD COLUMN IF NOT EXISTS payment_proof_url TEXT;
+`).catch(e => console.error('orders migrate:', e.message));
+
+// Auto-create store_settings table and seed default row
+pool.query(`
+  CREATE TABLE IF NOT EXISTS montblanc.store_settings (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    is_open BOOLEAN DEFAULT TRUE,
+    CONSTRAINT montblanc_store_single CHECK (id = 1)
+  );
+  INSERT INTO montblanc.store_settings (id, is_open) VALUES (1, TRUE) ON CONFLICT DO NOTHING;
+`).catch(e => console.error('store_settings init:', e.message));
+
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 
@@ -87,6 +103,68 @@ app.post('/api/user/:id/apartment', async (req, res) => {
       'UPDATE montblanc.users SET apartment = $1 WHERE id = $2',
       [apartment, req.params.id]
     );
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── ALL ORDERS (MASTER) ─────────────────────────────────────────────────────
+
+app.get('/api/orders/all', async (_req, res) => {
+  try {
+    const r = await pool.query(`
+      SELECT o.*,
+        json_agg(json_build_object('name', p.name, 'qty', oi.quantity, 'price', oi.price) ORDER BY oi.id) AS items
+      FROM montblanc.orders o
+      JOIN montblanc.order_items oi ON oi.order_id = o.id
+      JOIN montblanc.products p ON p.id = oi.product_id
+      GROUP BY o.id ORDER BY o.created_at DESC
+    `);
+    res.json(r.rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.put('/api/orders/:id/status', async (req, res) => {
+  const { status } = req.body;
+  const valid = ['created', 'paid', 'delivering', 'delivered'];
+  if (!valid.includes(status)) return res.status(400).json({ error: 'Status inválido' });
+  try {
+    await pool.query('UPDATE montblanc.orders SET status = $1 WHERE id = $2', [status, req.params.id]);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/orders/:id/proof', upload.single('proof'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+  try {
+    const url = '/uploads/' + req.file.filename;
+    await pool.query('UPDATE montblanc.orders SET payment_proof_url = $1 WHERE id = $2', [url, req.params.id]);
+    res.json({ url });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── STORE STATUS ────────────────────────────────────────────────────────────
+
+app.get('/api/store/status', async (_req, res) => {
+  try {
+    const r = await pool.query('SELECT is_open FROM montblanc.store_settings WHERE id = 1');
+    res.json({ open: r.rows[0]?.is_open !== false });
+  } catch {
+    res.json({ open: true });
+  }
+});
+
+app.post('/api/store/status', async (req, res) => {
+  const { open } = req.body;
+  try {
+    await pool.query('UPDATE montblanc.store_settings SET is_open = $1 WHERE id = 1', [open !== false]);
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });

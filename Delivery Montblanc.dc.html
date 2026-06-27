@@ -274,15 +274,72 @@
           <div style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #F0E9DB;border-radius:14px;padding:15px;margin-bottom:22px;"><div style="width:42px;height:42px;border-radius:11px;background:#EAF6EE;display:flex;align-items:center;justify-content:center;color:#1B8A4F;font-size:20px;"><i class="ph ph-house"></i></div><div><div style="font-weight:700;">Apartamento {{ apartment }}</div><div style="font-size:13px;color:#A39C90;">Cond. Montblanc · entrega grátis</div></div></div>
 
           <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;">Forma de pagamento</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <button onClick="{{ payPix.select }}" style="{{ payPix.style }}"><i class="ph-fill ph-qr-code" style="font-size:24px;color:#1B8A4F;"></i><div style="flex:1;"><div style="font-weight:700;">Pix</div><div style="font-size:12px;color:#A39C90;">Aprovação na hora</div></div><sc-if value="{{ payPix.selected }}" hint-placeholder-val="{{ true }}"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i></sc-if></button>
-            <button onClick="{{ payCard.select }}" style="{{ payCard.style }}"><i class="ph ph-credit-card" style="font-size:24px;color:#1B8A4F;"></i><div style="flex:1;"><div style="font-weight:700;">Cartão na entrega</div><div style="font-size:12px;color:#A39C90;">Crédito ou débito</div></div><sc-if value="{{ payCard.selected }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i></sc-if></button>
-            <button onClick="{{ payCash.select }}" style="{{ payCash.style }}"><i class="ph ph-money" style="font-size:24px;color:#1B8A4F;"></i><div style="flex:1;"><div style="font-weight:700;">Dinheiro</div><div style="font-size:12px;color:#A39C90;">Pague na entrega</div></div><sc-if value="{{ payCash.selected }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i></sc-if></button>
+          <div style="background:#fff;border:1.5px solid #1B8A4F;border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;">
+            <div style="width:46px;height:46px;border-radius:13px;background:#EAF6EE;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph-fill ph-qr-code" style="font-size:24px;color:#1B8A4F;"></i></div>
+            <div style="flex:1;"><div style="font-weight:700;">Pix</div><div style="font-size:12px;color:#A39C90;">Chave enviada após confirmar</div></div>
+            <i class="ph-fill ph-check-circle" style="font-size:22px;color:#1B8A4F;"></i>
+          </div>
+          <div style="background:#F8FBF9;border:1px solid #D1E8DC;border-radius:14px;padding:14px 16px;margin-top:10px;">
+            <div style="font-size:11px;font-weight:700;color:#A39C90;letter-spacing:.4px;margin-bottom:8px;">DADOS DO PIX</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+              <div><div style="font-weight:700;font-size:15px;letter-spacing:.5px;">033.701.790-59</div><div style="font-size:12px;color:#6B675F;margin-top:2px;">Santander · Andrews Franco</div></div>
+              <button onClick="{{ copyPixKey }}" style="background:#EAF6EE;border:none;border-radius:10px;padding:8px 13px;font-size:12px;font-weight:700;color:#15723F;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;"><i class="ph ph-copy"></i> Copiar</button>
+            </div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:19px;font-weight:800;margin-top:26px;"><span>Total</span><span style="color:#15723F;">{{ totalText }}</span></div>
         </div>
         <div style="padding:14px 22px 22px;border-top:1px solid #EFE8DA;background:#FBF7EF;">
           <button onClick="{{ placeOrder }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;">Confirmar pedido</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ PIX PAYMENT ============ -->
+    <sc-if value="{{ scr_pixPayment }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="padding:24px 22px 14px;border-bottom:1px solid #EFE8DA;">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Pagar via Pix</div>
+          <div style="font-size:13px;color:#A39C90;margin-top:3px;">Pedido confirmado · aguardando pagamento</div>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px;">
+          <!-- Confirmação -->
+          <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);border-radius:20px;padding:22px;color:#fff;text-align:center;">
+            <div style="width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px;"><i class="ph-fill ph-check"></i></div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;">Pedido recebido!</div>
+            <div style="font-size:13px;opacity:.85;margin-top:4px;">Faça o pagamento para confirmar</div>
+          </div>
+          <!-- Dados do Pix -->
+          <div style="background:#fff;border:1px solid #E7DECB;border-radius:16px;overflow:hidden;">
+            <div style="background:#F8FBF9;padding:14px 16px;border-bottom:1px solid #E7DECB;">
+              <div style="font-size:11px;font-weight:700;color:#A39C90;letter-spacing:.4px;margin-bottom:10px;">CHAVE PIX (CPF)</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;letter-spacing:.8px;">033.701.790-59</div>
+                <button onClick="{{ copyPixKey }}" style="background:#1B8A4F;color:#fff;border:none;border-radius:11px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;flex-shrink:0;"><i class="ph ph-copy"></i> Copiar</button>
+              </div>
+            </div>
+            <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:14px;"><span style="color:#A39C90;">Banco</span><span style="font-weight:600;">Santander</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;"><span style="color:#A39C90;">Favorecido</span><span style="font-weight:600;">Andrews Franco</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;border-top:1px solid #F0E9DB;padding-top:8px;margin-top:2px;"><span style="color:#A39C90;">Total</span><span style="font-weight:800;color:#15723F;font-size:16px;">{{ pixTotalText }}</span></div>
+            </div>
+          </div>
+          <!-- Upload comprovante -->
+          <sc-if value="{{ proofNotSent }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#FFF8EE;border:1px solid #F0E0B0;border-radius:16px;padding:16px;">
+              <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Após pagar, envie o comprovante</div>
+              <div style="font-size:13px;color:#6B675F;margin-bottom:14px;">Assim confirmamos seu pagamento mais rápido.</div>
+              <button onClick="{{ proofTrigger }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:13px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph ph-upload-simple"></i> Enviar comprovante de Pix</button>
+              <input type="file" id="proofInput" accept="image/*" onChange="{{ onProofChange }}" style="display:none;">
+            </div>
+          </sc-if>
+          <sc-if value="{{ proofSent }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#EAF6EE;border:1px solid #B6DFC6;border-radius:16px;padding:16px;text-align:center;">
+              <i class="ph-fill ph-check-circle" style="font-size:32px;color:#1B8A4F;"></i>
+              <div style="font-weight:700;font-size:15px;margin-top:8px;">Comprovante enviado!</div>
+              <div style="font-size:13px;color:#15723F;margin-top:4px;">Aguardando confirmação da loja.</div>
+            </div>
+          </sc-if>
+          <button onClick="{{ goHistory }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph ph-list-bullets" style="color:#1B8A4F;font-size:20px;"></i> Ver meus pedidos</button>
         </div>
       </div>
     </sc-if>
@@ -318,21 +375,31 @@
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
         <div style="padding:26px 22px 14px;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Meus pedidos</div></div>
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:6px 20px 20px;display:flex;flex-direction:column;gap:13px;">
-          <div onClick="{{ goChat }}" style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;cursor:pointer;">
-            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:700;">Pedido #2847</span><span style="background:#EAF6EE;color:#15723F;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;">Em entrega</span></div>
-            <div style="font-size:13px;color:#A39C90;margin-top:6px;">Hoje, 19:42 · 2 itens · Macarrão Caseiro, Lasanha</div>
-            <div style="font-weight:800;color:#15723F;margin-top:8px;">R$ 50,00</div>
-          </div>
-          <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:700;">Pedido #2790</span><span style="background:#F3ECDD;color:#6B675F;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;">Entregue</span></div>
-            <div style="font-size:13px;color:#A39C90;margin-top:6px;">22 jun, 20:15 · 3 itens · Refrigerante, Água, Chocolate</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;"><span style="font-weight:800;color:#15723F;">R$ 21,90</span><button style="background:#EAF6EE;color:#15723F;border:none;border-radius:10px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;">Pedir de novo</button></div>
-          </div>
-          <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:700;">Pedido #2701</span><span style="background:#F3ECDD;color:#6B675F;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;">Entregue</span></div>
-            <div style="font-size:13px;color:#A39C90;margin-top:6px;">18 jun, 13:05 · 1 item · Brigadeiro Gourmet</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;"><span style="font-weight:800;color:#15723F;">R$ 22,00</span><button style="background:#EAF6EE;color:#15723F;border:none;border-radius:10px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;">Pedir de novo</button></div>
-          </div>
+          <sc-if value="{{ hasOrders }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ historyOrders }}" as="o" hint-placeholder-count="3">
+              <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-weight:700;">Pedido #{{ o.shortId }}</span>
+                  <span style="{{ o.statusStyle }}">{{ o.statusLabel }}</span>
+                </div>
+                <div style="font-size:13px;color:#A39C90;margin-top:6px;">{{ o.date }} · {{ o.itemsSummary }}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+                  <span style="font-weight:800;color:#15723F;font-size:16px;">{{ o.totalText }}</span>
+                  <sc-if value="{{ o.canSendProof }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ o.sendProof }}" style="background:#FFF4E6;color:#D97706;border:1px solid #F0D090;border-radius:10px;padding:8px 13px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;"><i class="ph ph-upload-simple"></i> Comprovante</button>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ noOrders }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:40px 20px;color:#A39C90;">
+              <i class="ph ph-receipt" style="font-size:48px;"></i>
+              <div style="font-size:15px;font-weight:600;margin-top:12px;">Nenhum pedido ainda</div>
+              <div style="font-size:13px;margin-top:4px;">Seus pedidos aparecerão aqui</div>
+            </div>
+          </sc-if>
+          <input type="file" id="proofInput" accept="image/*" onChange="{{ onProofChange }}" style="display:none;">
         </div>
       </div>
     </sc-if>
@@ -391,7 +458,8 @@
           <div style="font-size:12px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR · APTO 608</div>
           <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:23px;font-weight:800;margin-top:3px;">Adicionar produto</div>
           <div style="display:flex;gap:10px;margin-top:14px;">
-            <button onClick="{{ goManageProducts }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;">{{ productsCount }}</div><div style="font-size:12px;opacity:.85;margin-top:2px;">Editar produtos</div></button>
+            <button onClick="{{ goManageProducts }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;">{{ productsCount }}</div><div style="font-size:12px;opacity:.85;margin-top:2px;">Produtos</div></button>
+            <button onClick="{{ goMasterOrders }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;display:flex;align-items:center;gap:6px;"><i class="ph ph-receipt"></i></div><div style="font-size:12px;opacity:.85;margin-top:2px;">Pedidos</div></button>
             <button onClick="{{ goCats }}" style="flex:1;background:rgba(255,255,255,.14);border:none;border-radius:13px;padding:12px;color:#fff;cursor:pointer;text-align:left;"><div style="font-size:21px;font-weight:800;display:flex;align-items:center;gap:6px;"><i class="ph ph-squares-four"></i></div><div style="font-size:12px;opacity:.85;margin-top:2px;">Categorias</div></button>
           </div>
         </div>
@@ -411,6 +479,51 @@
             <div style="border:2px dashed #DDD3BF;border-radius:14px;padding:26px;text-align:center;color:#A39C90;background:#FCFAF4;"><i class="ph ph-image" style="font-size:30px;"></i><div style="font-size:13px;margin-top:6px;">Toque para enviar uma foto</div></div>
           </div>
           <button onClick="{{ saveProduct }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph-bold ph-check"></i> Publicar produto</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ PEDIDOS (MASTER) ============ -->
+    <sc-if value="{{ scr_masterOrders }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:24px 22px 20px;color:#fff;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-arrow-left"></i></button>
+          <div style="flex:1;">
+            <div style="font-size:11px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;margin-top:1px;">Pedidos</div>
+          </div>
+          <button onClick="{{ refreshMasterOrders }}" style="width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrows-clockwise"></i></button>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:14px 18px 20px;display:flex;flex-direction:column;gap:12px;">
+          <sc-if value="{{ hasMasterOrders }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ masterOrderItems }}" as="o" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <div><span style="font-weight:700;font-size:15px;">Apto {{ o.apt }}</span><span style="font-size:13px;color:#A39C90;margin-left:8px;">#{{ o.shortId }}</span></div>
+                  <span style="{{ o.statusStyle }}">{{ o.statusLabel }}</span>
+                </div>
+                <div style="font-size:13px;color:#6B675F;">{{ o.itemsSummary }}</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-weight:800;color:#15723F;font-size:16px;">{{ o.totalText }}</span>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <sc-if value="{{ o.hasProof }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ o.openProof }}" style="width:36px;height:36px;border-radius:10px;background:#EAF6EE;border:none;cursor:pointer;color:#1B8A4F;font-size:18px;display:flex;align-items:center;justify-content:center;" title="Ver comprovante"><i class="ph ph-image"></i></button>
+                    </sc-if>
+                    <sc-if value="{{ o.canAdvance }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ o.advance }}" style="background:#1B8A4F;color:#fff;border:none;border-radius:11px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">{{ o.nextLabel }}</button>
+                    </sc-if>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:#C0B8A8;">{{ o.date }}</div>
+              </div>
+            </sc-for>
+          </sc-if>
+          <sc-if value="{{ noMasterOrders }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center;padding:50px 20px;color:#A39C90;">
+              <i class="ph ph-receipt" style="font-size:48px;"></i>
+              <div style="font-size:15px;font-weight:600;margin-top:12px;">Nenhum pedido ainda</div>
+            </div>
+          </sc-if>
         </div>
       </div>
     </sc-if>
@@ -609,6 +722,11 @@ class Component extends DCLogic {
     editingProductId: null,
     lightboxUrl: null,
     storeOpen: true,
+    currentOrderId: null,
+    currentOrderTotal: 0,
+    proofSent: false,
+    orders: [],
+    masterOrders: [],
     editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '', icon: '' },
     newCat: '',
     chat: [{ from: 'seller', text: 'Olá! Aqui é da Loja 608. Posso ajudar com o seu pedido?' }],
@@ -675,7 +793,7 @@ class Component extends DCLogic {
     const { loginEmail, loginPassword } = this.state;
     this._fetch('POST', '/login', { email: loginEmail, password: loginPassword })
       .then(res => {
-        this.setState({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master });
+        this.setState({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master }, () => { this.loadOrders(); this._loadFavorites(); });
         this._loadFavorites();
         if (res.user.apartment) { this.tab('home'); } else { this.go('apt'); }
       })
@@ -756,14 +874,14 @@ class Component extends DCLogic {
 
   placeOrder = () => {
     if (!this.state.storeOpen) { this.showToast('ph ph-storefront', 'Loja fechada no momento'); return; }
-    const { userId, apartment, payment, cart } = this.state;
+    const { userId, apartment, cart } = this.state;
     const cartIds = Object.keys(cart);
     const items = cartIds.map(id => { const p = this.prod(id); return { id, qty: cart[id], price: p ? Number(p.price) : 0 }; });
     const total = items.reduce((a, i) => a + i.qty * i.price, 0);
-    this._fetch('POST', '/orders', { user_id: userId, apartment, payment, items, total })
-      .then(() => {
-        this.setState({ orderStep: 0, cart: {} });
-        this.go('tracking');
+    this._fetch('POST', '/orders', { user_id: userId, apartment, payment: 'pix', items, total })
+      .then(r => {
+        this.setState({ orderStep: 0, cart: {}, currentOrderId: r.order.id, currentOrderTotal: total, proofSent: false });
+        this.go('pixPayment');
         this._reloadProducts();
         clearInterval(this._t);
         this._t = setInterval(() => {
@@ -847,6 +965,56 @@ class Component extends DCLogic {
   };
 
   setEditForm = (k) => (e) => this.setState(st => ({ editForm: { ...st.editForm, [k]: e.target.value } }));
+
+  copyPixKey = () => {
+    navigator.clipboard.writeText('03370179059')
+      .then(() => this.showToast('ph-fill ph-check-circle', 'Chave Pix copiada!'))
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao copiar'));
+  };
+
+  proofTrigger = () => { const el = document.getElementById('proofInput'); if (el) el.click(); };
+
+  onProofChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file || !this.state.currentOrderId) return;
+    const fd = new FormData();
+    fd.append('proof', file);
+    this.showToast('ph ph-spinner', 'Enviando comprovante...');
+    fetch('/api/orders/' + this.state.currentOrderId + '/proof', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(r => {
+        if (r.url) {
+          this.setState({ proofSent: true });
+          this.showToast('ph-fill ph-check-circle', 'Comprovante enviado!');
+          this.loadOrders();
+        } else {
+          this.showToast('ph-fill ph-warning-circle', r.error || 'Erro no envio');
+        }
+      })
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao enviar'));
+  };
+
+  loadOrders = () => {
+    if (!this.state.userId) return;
+    this._fetch('GET', '/orders/' + this.state.userId)
+      .then(orders => this.setState({ orders }))
+      .catch(() => {});
+  };
+
+  loadMasterOrders = () => {
+    this._fetch('GET', '/orders/all')
+      .then(orders => this.setState({ masterOrders: orders }))
+      .catch(() => {});
+  };
+
+  advanceOrderStatus = (id, current) => {
+    const next = { created: 'paid', paid: 'delivering', delivering: 'delivered' };
+    const status = next[current];
+    if (!status) return;
+    this._fetch('PUT', '/orders/' + id + '/status', { status })
+      .then(() => { this.loadMasterOrders(); this.showToast('ph-fill ph-check-circle', 'Status atualizado!'); })
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao atualizar'));
+  };
 
   openLightbox = (url) => this.setState({ lightboxUrl: url });
   closeLightbox = () => this.setState({ lightboxUrl: null });
@@ -996,7 +1164,8 @@ class Component extends DCLogic {
       scr_profile: scr('profile'), scr_addProduct: scr('addProduct'), scr_categories: scr('categories'),
       scr_chat: scr('chat'), scr_favorites: scr('favorites'),
       scr_manageProducts: scr('manageProducts'), scr_editProduct: scr('editProduct'),
-      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct'].includes(s.screen),
+      scr_masterOrders: scr('masterOrders'), scr_pixPayment: scr('pixPayment'),
+      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct', 'masterOrders', 'pixPayment'].includes(s.screen),
       tabItems, toast: s.toast,
       apartment: s.apartment, isMaster: s.isMaster, aptCanContinue: !!s.apartment, aptList,
       aptInput: s.aptInput,
@@ -1031,7 +1200,47 @@ class Component extends DCLogic {
       openEditImgLightbox: () => s.editForm.icon && this.openLightbox(s.editForm.icon),
       showLightbox: !!s.lightboxUrl, lightboxUrl: s.lightboxUrl || '', closeLightbox: this.closeLightbox,
       goManageProducts: () => this.go('manageProducts'),
+      goMasterOrders: () => { this.loadMasterOrders(); this.go('masterOrders'); },
+      refreshMasterOrders: this.loadMasterOrders,
       storeOpen: s.storeOpen, storeClosed: !s.storeOpen, toggleStore: this.toggleStore,
+      copyPixKey: this.copyPixKey,
+      pixTotalText: this.brl(s.currentOrderTotal),
+      proofSent: s.proofSent, proofNotSent: !s.proofSent,
+      proofTrigger: this.proofTrigger, onProofChange: this.onProofChange,
+      goHistory: () => { this.loadOrders(); this.tab('history'); },
+      ...(() => {
+        const SL = { created: 'Pedido criado', paid: 'Pedido pago', delivering: 'Em entrega', delivered: 'Entregue ✓' };
+        const SS = (st) => {
+          const map = { created: 'background:#F3ECDD;color:#6B675F;', paid: 'background:#DBEAFE;color:#1D4ED8;', delivering: 'background:#FFF4E6;color:#D97706;', delivered: 'background:#EAF6EE;color:#15723F;' };
+          return (map[st] || map.created) + 'font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;';
+        };
+        const NL = { created: 'Confirmar pagamento', paid: 'Saiu para entrega', delivering: 'Confirmar entrega' };
+        const fmtDate = (d) => new Date(d).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const fmtId = (id) => String(id).slice(-4).padStart(4, '0');
+        const historyOrders = (s.orders || []).map(o => ({
+          shortId: fmtId(o.id), apt: o.apartment, totalText: this.brl(o.total),
+          statusLabel: SL[o.status] || SL.created, statusStyle: SS(o.status),
+          date: fmtDate(o.created_at),
+          itemsSummary: (o.items || []).map(i => i.name).join(', '),
+          canSendProof: !o.payment_proof_url && o.status === 'created',
+          sendProof: () => { this.setState({ currentOrderId: o.id }); setTimeout(() => this.proofTrigger(), 50); }
+        }));
+        const masterOrderItems = (s.masterOrders || []).map(o => ({
+          shortId: fmtId(o.id), apt: o.apartment, totalText: this.brl(o.total),
+          statusLabel: SL[o.status] || SL.created, statusStyle: SS(o.status),
+          date: fmtDate(o.created_at),
+          itemsSummary: (o.items || []).map(i => i.name).join(', '),
+          hasProof: !!o.payment_proof_url, proofUrl: o.payment_proof_url || '',
+          openProof: o.payment_proof_url ? () => this.openLightbox(o.payment_proof_url) : () => {},
+          canAdvance: o.status !== 'delivered',
+          nextLabel: NL[o.status] || 'Avançar',
+          advance: () => this.advanceOrderStatus(o.id, o.status || 'created')
+        }));
+        return {
+          historyOrders, hasOrders: historyOrders.length > 0, noOrders: historyOrders.length === 0,
+          masterOrderItems, hasMasterOrders: masterOrderItems.length > 0, noMasterOrders: masterOrderItems.length === 0
+        };
+      })(),
       chat, chatInput: s.chatInput,
       trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
       payPix: payOpt('pix'), payCard: payOpt('card'), payCash: payOpt('cash'),
