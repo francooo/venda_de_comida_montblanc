@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
+const { put } = require('@vercel/blob');
 
 if (!process.env.DATABASE_URL) {
   console.error('Erro: DATABASE_URL não definida. Crie o arquivo .env com base no .env.example');
@@ -32,18 +32,9 @@ pool.query(`
   INSERT INTO montblanc.store_settings (id, is_open) VALUES (1, TRUE) ON CONFLICT DO NOTHING;
 `).catch(e => console.error('store_settings init:', e.message));
 
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: uploadsDir,
-    filename: (_req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase();
-      cb(null, Date.now() + '-' + Math.random().toString(36).slice(2) + ext);
-    }
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     cb(null, /^image\//.test(file.mimetype));
   }
@@ -54,7 +45,6 @@ app.use(express.json());
 
 // Serve static files (support.js, etc.)
 app.use(express.static(__dirname));
-app.use('/uploads', express.static(uploadsDir));
 
 // Serve the main HTML
 app.get('/', (_req, res) => {
@@ -142,9 +132,11 @@ app.put('/api/orders/:id/status', async (req, res) => {
 app.post('/api/orders/:id/proof', upload.single('proof'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
   try {
-    const url = '/uploads/' + req.file.filename;
-    await pool.query('UPDATE montblanc.orders SET payment_proof_url = $1 WHERE id = $2', [url, req.params.id]);
-    res.json({ url });
+    const blob = await put(req.file.originalname, req.file.buffer, {
+      access: 'public', addRandomSuffix: true, contentType: req.file.mimetype,
+    });
+    await pool.query('UPDATE montblanc.orders SET payment_proof_url = $1 WHERE id = $2', [blob.url, req.params.id]);
+    res.json({ url: blob.url });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -173,9 +165,16 @@ app.post('/api/store/status', async (req, res) => {
 
 // ─── UPLOAD ──────────────────────────────────────────────────────────────────
 
-app.post('/api/upload', upload.single('image'), (req, res) => {
+app.post('/api/upload', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
-  res.json({ url: '/uploads/' + req.file.filename });
+  try {
+    const blob = await put(req.file.originalname, req.file.buffer, {
+      access: 'public', addRandomSuffix: true, contentType: req.file.mimetype,
+    });
+    res.json({ url: blob.url });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // ─── PRODUCTS ────────────────────────────────────────────────────────────────
@@ -327,7 +326,11 @@ app.post('/api/favorites/toggle', async (req, res) => {
 
 // ─── START ───────────────────────────────────────────────────────────────────
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Delivery Montblanc rodando em http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Delivery Montblanc rodando em http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
