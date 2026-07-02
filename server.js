@@ -6,6 +6,9 @@ const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
 const { put } = require('@vercel/blob');
+const crypto = require('crypto');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 if (!process.env.DATABASE_URL) {
   console.error('Erro: DATABASE_URL não definida. Crie o arquivo .env com base no .env.example');
@@ -26,6 +29,12 @@ pool.query(`
   ALTER TABLE montblanc.orders ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'created';
   ALTER TABLE montblanc.orders ADD COLUMN IF NOT EXISTS payment_proof_url TEXT;
 `).catch(e => console.error('orders migrate:', e.message));
+
+// Auto-migrate users table: add reset token columns
+pool.query(`
+  ALTER TABLE montblanc.users ADD COLUMN IF NOT EXISTS reset_token TEXT;
+  ALTER TABLE montblanc.users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;
+`).catch(e => console.error('reset_token migrate:', e.message));
 
 // Auto-create store_settings table and seed default row
 pool.query(`
@@ -97,6 +106,62 @@ app.post('/api/user/:id/apartment', async (req, res) => {
     await pool.query(
       'UPDATE montblanc.users SET apartment = $1 WHERE id = $2',
       [apartment, req.params.id]
+    );
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── PASSWORD RESET ──────────────────────────────────────────────────────────
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'E-mail obrigatório' });
+  try {
+    const r = await pool.query('SELECT id FROM montblanc.users WHERE email = $1', [email]);
+    if (!r.rows.length) return res.json({ ok: true }); // não revela se email existe
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const expires = new Date(Date.now() + 60 * 60 * 1000);
+    await pool.query(
+      'UPDATE montblanc.users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3',
+      [code, expires, email]
+    );
+    await resend.emails.send({
+      from: 'Delivery Montblanc <onboarding@resend.dev>',
+      to: email,
+      subject: 'Seu código de recuperação de senha',
+      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;">
+               <h2 style="color:#1B8A4F;">Delivery Montblanc</h2>
+               <p>Seu código para redefinir a senha é:</p>
+               <div style="font-size:36px;font-weight:800;letter-spacing:10px;color:#1C1A17;padding:24px 0;">${code}</div>
+               <p style="color:#6B675F;font-size:14px;">Válido por 1 hora. Se não foi você, ignore este email.</p>
+             </div>`,
+    });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { email, code, newPassword } = req.body;
+  if (!email || !code || !newPassword) return res.status(400).json({ error: 'Dados incompletos' });
+  if (newPassword.length < 6) return res.status(400).json({ error: 'A senha precisa ter ao menos 6 caracteres' });
+  try {
+    const r = await pool.query(
+      'SELECT id, reset_token, reset_token_expires FROM montblanc.users WHERE email = $1',
+      [email]
+    );
+    if (!r.rows.length) return res.status(400).json({ error: 'E-mail não encontrado' });
+    const user = r.rows[0];
+    if (user.reset_token !== code) return res.status(400).json({ error: 'Código inválido' });
+    if (!user.reset_token_expires || new Date() > new Date(user.reset_token_expires))
+      return res.status(400).json({ error: 'Código expirado. Solicite um novo.' });
+    const hash = await bcrypt.hash(newPassword, 10);
+    await pool.query(
+      'UPDATE montblanc.users SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2',
+      [hash, user.id]
     );
     res.json({ ok: true });
   } catch (e) {

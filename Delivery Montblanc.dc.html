@@ -50,7 +50,8 @@
           <button onClick="{{ doLogin }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;">Entrar <i class="ph-bold ph-arrow-right"></i></button>
           <div style="display:flex;align-items:center;gap:12px;margin:8px 0;color:#B7B0A2;font-size:13px;"><div style="flex:1;height:1px;background:#E7DECB;"></div>ou<div style="flex:1;height:1px;background:#E7DECB;"></div></div>
           <button onClick="{{ doLogin }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><i class="ph-bold ph-google-logo" style="font-size:20px;color:#1B8A4F;"></i> Continuar com Google</button>
-          <div style="text-align:center;margin-top:14px;font-size:14px;color:#6B675F;">Não tem conta? <span onClick="{{ goRegister }}" style="color:#1B8A4F;font-weight:700;cursor:pointer;">Cadastre-se</span></div>
+          <div style="text-align:center;font-size:14px;color:#6B675F;"><span onClick="{{ goForgotPassword }}" style="color:#1B8A4F;font-weight:600;cursor:pointer;">Esqueci a senha</span></div>
+          <div style="text-align:center;margin-top:4px;font-size:14px;color:#6B675F;">Não tem conta? <span onClick="{{ goRegister }}" style="color:#1B8A4F;font-weight:700;cursor:pointer;">Cadastre-se</span></div>
           <div style="text-align:center;font-size:12px;color:#B7B0A2;margin-top:auto;padding-top:18px;">Acesso exclusivo para moradores do Cond. Montblanc</div>
         </div>
       </div>
@@ -71,6 +72,50 @@
           <input type="password" value="{{ regPassword }}" onInput="{{ onRegPassword }}" placeholder="Crie uma senha" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
           <button onClick="{{ doRegister }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;">Continuar</button>
           <button onClick="{{ doRegister }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><i class="ph-bold ph-google-logo" style="font-size:20px;color:#1B8A4F;"></i> Cadastrar com Google</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ ESQUECI A SENHA ============ -->
+    <sc-if value="{{ scr_forgotPassword }}" hint-placeholder-val="{{ true }}">
+      <div class="app-scroll" style="flex:1;overflow-y:auto;animation:scrIn .35s ease;">
+        <div style="padding:26px 24px 8px;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Esqueci a senha</div>
+        </div>
+        <div style="padding:14px 24px 32px;display:flex;flex-direction:column;gap:16px;">
+          <div style="font-size:14px;color:#6B675F;line-height:1.5;">Informe o e-mail da sua conta. Vamos enviar um código de 6 dígitos para você redefinir a senha.</div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">E-mail</label>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E7DECB;border-radius:13px;padding:0 15px;"><i class="ph ph-envelope-simple" style="font-size:20px;color:#A39C90;"></i><input type="email" value="{{ forgotEmail }}" onInput="{{ onForgotEmail }}" placeholder="voce@email.com" style="border:none;background:none;padding:15px 0;font-size:16px;width:100%;color:#1C1A17;"></div>
+          </div>
+          <button onClick="{{ doForgotPassword }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">Enviar código <i class="ph-bold ph-paper-plane-right"></i></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ REDEFINIR SENHA ============ -->
+    <sc-if value="{{ scr_resetPassword }}" hint-placeholder-val="{{ true }}">
+      <div class="app-scroll" style="flex:1;overflow-y:auto;animation:scrIn .35s ease;">
+        <div style="padding:26px 24px 8px;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Redefinir senha</div>
+        </div>
+        <div style="padding:14px 24px 32px;display:flex;flex-direction:column;gap:16px;">
+          <div style="background:#EAF6EE;border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+            <i class="ph-fill ph-check-circle" style="font-size:20px;color:#1B8A4F;flex-shrink:0;margin-top:1px;"></i>
+            <div style="font-size:14px;color:#1C1A17;line-height:1.5;">Código enviado para <strong>{{ forgotEmail }}</strong>. Verifique sua caixa de entrada (e spam).</div>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Código de 6 dígitos</label>
+            <input type="number" value="{{ resetCode }}" onInput="{{ onResetCode }}" placeholder="000000" maxlength="6" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:22px;font-weight:700;letter-spacing:8px;width:100%;text-align:center;color:#1C1A17;">
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:#6B675F;display:block;margin-bottom:7px;">Nova senha</label>
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E7DECB;border-radius:13px;padding:0 15px;"><i class="ph ph-lock-simple" style="font-size:20px;color:#A39C90;"></i><input type="password" value="{{ resetNewPassword }}" onInput="{{ onResetNewPassword }}" placeholder="Mínimo 6 caracteres" style="border:none;background:none;padding:15px 0;font-size:16px;width:100%;color:#1C1A17;"></div>
+          </div>
+          <button onClick="{{ doResetPassword }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">Redefinir senha <i class="ph-bold ph-arrow-right"></i></button>
+          <div style="text-align:center;font-size:14px;color:#6B675F;">Não recebeu? <span onClick="{{ back }}" style="color:#1B8A4F;font-weight:600;cursor:pointer;">Tentar novamente</span></div>
         </div>
       </div>
     </sc-if>
@@ -710,6 +755,9 @@ class Component extends DCLogic {
     regEmail: '',
     regPhone: '',
     regPassword: '',
+    forgotEmail: '',
+    resetCode: '',
+    resetNewPassword: '',
     query: '',
     activeCat: 'Todos',
     selectedId: null,
@@ -806,6 +854,30 @@ class Component extends DCLogic {
     this._fetch('POST', '/register', { name: regName, email: regEmail, phone: regPhone, password: regPassword })
       .then(res => { this.setState({ userId: res.user.id, name: res.user.name }); this.go('apt'); })
       .catch(e => this.showToast('ph-fill ph-warning-circle', e.message));
+  };
+
+  doForgotPassword = async () => {
+    const { forgotEmail } = this.state;
+    if (!forgotEmail) { this.showToast('ph-fill ph-warning-circle', 'Informe seu e-mail'); return; }
+    try {
+      await this._fetch('POST', '/auth/forgot-password', { email: forgotEmail });
+      this.go('resetPassword');
+    } catch (e) {
+      this.showToast('ph-fill ph-warning-circle', e.message);
+    }
+  };
+
+  doResetPassword = async () => {
+    const { forgotEmail, resetCode, resetNewPassword } = this.state;
+    if (!resetCode || !resetNewPassword) { this.showToast('ph-fill ph-warning-circle', 'Preencha o código e a nova senha'); return; }
+    if (resetNewPassword.length < 6) { this.showToast('ph-fill ph-warning-circle', 'A senha precisa ter ao menos 6 caracteres'); return; }
+    try {
+      await this._fetch('POST', '/auth/reset-password', { email: forgotEmail, code: resetCode, newPassword: resetNewPassword });
+      this.showToast('ph-fill ph-check-circle', 'Senha redefinida com sucesso!');
+      this.setState({ screen: 'login', nav: ['login'], resetCode: '', resetNewPassword: '', forgotEmail: '' });
+    } catch (e) {
+      this.showToast('ph-fill ph-warning-circle', e.message);
+    }
   };
 
   confirmApt = () => {
@@ -1165,6 +1237,7 @@ class Component extends DCLogic {
       scr_chat: scr('chat'), scr_favorites: scr('favorites'),
       scr_manageProducts: scr('manageProducts'), scr_editProduct: scr('editProduct'),
       scr_masterOrders: scr('masterOrders'), scr_pixPayment: scr('pixPayment'),
+      scr_forgotPassword: scr('forgotPassword'), scr_resetPassword: scr('resetPassword'),
       showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct', 'masterOrders', 'pixPayment'].includes(s.screen),
       tabItems, toast: s.toast,
       apartment: s.apartment, isMaster: s.isMaster, aptCanContinue: !!s.apartment, aptList,
@@ -1174,6 +1247,7 @@ class Component extends DCLogic {
       name: s.name,
       loginEmail: s.loginEmail, loginPassword: s.loginPassword,
       regName: s.regName, regEmail: s.regEmail, regPhone: s.regPhone, regPassword: s.regPassword,
+      forgotEmail: s.forgotEmail, resetCode: s.resetCode, resetNewPassword: s.resetNewPassword,
       query: s.query,
       filtered, hasResults: filtered.length > 0, favProducts, hasFavs: favProducts.length > 0,
       catChips, catList, categories: s.categories,
@@ -1246,6 +1320,8 @@ class Component extends DCLogic {
       payPix: payOpt('pix'), payCard: payOpt('card'), payCash: payOpt('cash'),
       go: this.go, back: this.back,
       doLogin: this.doLogin, doRegister: this.doRegister, goRegister: () => this.go('register'),
+      goForgotPassword: () => this.go('forgotPassword'),
+      doForgotPassword: this.doForgotPassword, doResetPassword: this.doResetPassword,
       goFav: () => this.tab('favorites'), goHist: () => this.tab('history'),
       confirmApt: this.confirmApt,
       openCart: () => this.go('cart'), goCheckout: () => this.go('checkout'), placeOrder: this.placeOrder,
@@ -1258,6 +1334,7 @@ class Component extends DCLogic {
       onQuery: this.set('query'), onNewCat: this.set('newCat'), onChatInput: this.set('chatInput'),
       onLoginEmail: this.set('loginEmail'), onLoginPassword: this.set('loginPassword'),
       onRegName: this.set('regName'), onRegEmail: this.set('regEmail'), onRegPhone: this.set('regPhone'), onRegPassword: this.set('regPassword'),
+      onForgotEmail: this.set('forgotEmail'), onResetCode: this.set('resetCode'), onResetNewPassword: this.set('resetNewPassword'),
       fName: this.setForm('name'), fPrice: this.setForm('price'), fUnit: this.setForm('unit'), fDesc: this.setForm('desc'), fCat: this.setForm('cat')
     };
   }
