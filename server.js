@@ -5,10 +5,9 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
-const { put } = require('@vercel/blob');
 const crypto = require('crypto');
 const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 if (!process.env.DATABASE_URL) {
   console.error('Erro: DATABASE_URL não definida. Crie o arquivo .env com base no .env.example');
@@ -36,6 +35,16 @@ pool.query(`
   ALTER TABLE montblanc.users ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMPTZ;
 `).catch(e => console.error('reset_token migrate:', e.message));
 
+// Auto-create images table for DB-stored uploads
+pool.query(`
+  CREATE TABLE IF NOT EXISTS montblanc.images (
+    id SERIAL PRIMARY KEY,
+    data TEXT NOT NULL,
+    mime_type TEXT NOT NULL DEFAULT 'image/jpeg',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+`).catch(e => console.error('images table init:', e.message));
+
 // Auto-create store_settings table and seed default row
 pool.query(`
   CREATE TABLE IF NOT EXISTS montblanc.store_settings (
@@ -48,7 +57,7 @@ pool.query(`
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 4 * 1024 * 1024 },
+  limits: { fileSize: 2 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     cb(null, /^image\//.test(file.mimetype));
   }
@@ -127,17 +136,21 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       'UPDATE montblanc.users SET reset_token = $1, reset_token_expires = $2 WHERE email = $3',
       [code, expires, email]
     );
-    await resend.emails.send({
-      from: 'Delivery Montblanc <onboarding@resend.dev>',
-      to: email,
-      subject: 'Seu código de recuperação de senha',
-      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;">
-               <h2 style="color:#1B8A4F;">Delivery Montblanc</h2>
-               <p>Seu código para redefinir a senha é:</p>
-               <div style="font-size:36px;font-weight:800;letter-spacing:10px;color:#1C1A17;padding:24px 0;">${code}</div>
-               <p style="color:#6B675F;font-size:14px;">Válido por 1 hora. Se não foi você, ignore este email.</p>
-             </div>`,
-    });
+    if (resend) {
+      await resend.emails.send({
+        from: 'Delivery Montblanc <onboarding@resend.dev>',
+        to: email,
+        subject: 'Seu código de recuperação de senha',
+        html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;">
+                 <h2 style="color:#1B8A4F;">Delivery Montblanc</h2>
+                 <p>Seu código para redefinir a senha é:</p>
+                 <div style="font-size:36px;font-weight:800;letter-spacing:10px;color:#1C1A17;padding:24px 0;">${code}</div>
+                 <p style="color:#6B675F;font-size:14px;">Válido por 1 hora. Se não foi você, ignore este email.</p>
+               </div>`,
+      });
+    } else {
+      console.log(`[DEV] Código de reset para ${email}: ${code}`);
+    }
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -202,11 +215,14 @@ app.put('/api/orders/:id/status', async (req, res) => {
 app.post('/api/orders/:id/proof', upload.single('proof'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
   try {
-    const blob = await put(req.file.originalname, req.file.buffer, {
-      access: 'public', addRandomSuffix: true, contentType: req.file.mimetype,
-    });
-    await pool.query('UPDATE montblanc.orders SET payment_proof_url = $1 WHERE id = $2', [blob.url, req.params.id]);
-    res.json({ url: blob.url });
+    const b64 = req.file.buffer.toString('base64');
+    const imgRes = await pool.query(
+      'INSERT INTO montblanc.images (data, mime_type) VALUES ($1, $2) RETURNING id',
+      [b64, req.file.mimetype]
+    );
+    const url = '/api/images/' + imgRes.rows[0].id;
+    await pool.query('UPDATE montblanc.orders SET payment_proof_url = $1 WHERE id = $2', [url, req.params.id]);
+    res.json({ url });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -233,15 +249,35 @@ app.post('/api/store/status', async (req, res) => {
   }
 });
 
+// ─── IMAGES ──────────────────────────────────────────────────────────────────
+
+app.get('/api/images/:id', async (req, res) => {
+  try {
+    const r = await pool.query(
+      'SELECT data, mime_type FROM montblanc.images WHERE id = $1',
+      [req.params.id]
+    );
+    if (!r.rows.length) return res.status(404).end();
+    const buf = Buffer.from(r.rows[0].data, 'base64');
+    res.set('Content-Type', r.rows[0].mime_type);
+    res.set('Cache-Control', 'public, max-age=31536000');
+    res.send(buf);
+  } catch (e) {
+    res.status(500).end();
+  }
+});
+
 // ─── UPLOAD ──────────────────────────────────────────────────────────────────
 
 app.post('/api/upload', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
   try {
-    const blob = await put(req.file.originalname, req.file.buffer, {
-      access: 'public', addRandomSuffix: true, contentType: req.file.mimetype,
-    });
-    res.json({ url: blob.url });
+    const b64 = req.file.buffer.toString('base64');
+    const r = await pool.query(
+      'INSERT INTO montblanc.images (data, mime_type) VALUES ($1, $2) RETURNING id',
+      [b64, req.file.mimetype]
+    );
+    res.json({ url: '/api/images/' + r.rows[0].id });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
