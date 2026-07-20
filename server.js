@@ -156,9 +156,12 @@ app.post('/api/login', async (req, res) => {
 
 // ─── GOOGLE OAUTH ─────────────────────────────────────────────────────────────
 
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'], session: false })
-);
+app.get('/auth/google', (req, res, next) => {
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    return res.status(503).send('Google OAuth não configurado: defina GOOGLE_CLIENT_ID nas variáveis de ambiente.');
+  }
+  passport.authenticate('google', { scope: ['email', 'profile'], session: false })(req, res, next);
+});
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/?error=google_auth_failed' }),
