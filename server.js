@@ -110,6 +110,10 @@ app.post('/api/login', async (req, res) => {
 
 app.post('/api/user/:id/apartment', async (req, res) => {
   const { apartment } = req.body;
+  if (apartment === '608') {
+    const u = await pool.query('SELECT is_master FROM montblanc.users WHERE id = $1', [req.params.id]);
+    if (!u.rows[0]?.is_master) return res.status(403).json({ error: 'Apartamento reservado para a loja' });
+  }
   try {
     // is_master nunca muda por troca de apartamento — depende exclusivamente do e-mail
     await pool.query(
@@ -187,12 +191,13 @@ app.post('/api/auth/reset-password', async (req, res) => {
 app.get('/api/orders/all', async (_req, res) => {
   try {
     const r = await pool.query(`
-      SELECT o.*,
+      SELECT o.*, u.name AS buyer_name,
         json_agg(json_build_object('name', p.name, 'qty', oi.quantity, 'price', oi.price) ORDER BY oi.id) AS items
       FROM montblanc.orders o
+      LEFT JOIN montblanc.users u ON u.id = o.user_id
       JOIN montblanc.order_items oi ON oi.order_id = o.id
       JOIN montblanc.products p ON p.id = oi.product_id
-      GROUP BY o.id ORDER BY o.created_at DESC
+      GROUP BY o.id, u.name ORDER BY o.created_at DESC
     `);
     res.json(r.rows);
   } catch (e) {
