@@ -29,6 +29,10 @@ pool.query(`
   ALTER TABLE montblanc.orders ADD COLUMN IF NOT EXISTS payment_proof_url TEXT;
 `).catch(e => console.error('orders migrate:', e.message));
 
+// Normalize legacy status 'confirmed' → 'created'
+pool.query(`UPDATE montblanc.orders SET status = 'created' WHERE status = 'confirmed'`)
+  .catch(e => console.error('orders status normalize:', e.message));
+
 // Auto-migrate users table: add reset token columns
 pool.query(`
   ALTER TABLE montblanc.users ADD COLUMN IF NOT EXISTS reset_token TEXT;
@@ -366,7 +370,7 @@ app.post('/api/orders', async (req, res) => {
   try {
     await client.query('BEGIN');
     const orderRes = await client.query(
-      'INSERT INTO montblanc.orders (user_id, apartment, payment, total) VALUES ($1,$2,$3,$4) RETURNING *',
+      'INSERT INTO montblanc.orders (user_id, apartment, payment, total, status) VALUES ($1,$2,$3,$4,\'created\') RETURNING *',
       [user_id || null, apartment, payment, total]
     );
     const order = orderRes.rows[0];
