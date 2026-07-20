@@ -7,6 +7,8 @@ const path = require('path');
 const multer = require('multer');
 const crypto = require('crypto');
 const { Resend } = require('resend');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 if (!process.env.DATABASE_URL) {
@@ -22,6 +24,43 @@ const pool = new Pool({
 });
 
 const MASTER_EMAIL = 'andrewsfranco93@gmail.com';
+
+// Auto-migrate: google_id column and auth_codes table
+pool.query(`
+  ALTER TABLE montblanc.users ADD COLUMN IF NOT EXISTS google_id TEXT;
+  CREATE TABLE IF NOT EXISTS montblanc.auth_codes (
+    code TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL
+  );
+`).catch(e => console.error('google migrate:', e.message));
+
+// Google OAuth strategy
+if (process.env.GOOGLE_CLIENT_ID) {
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.CALLBACK_URL || 'http://localhost:4000/auth/google/callback',
+  }, async (_at, _rt, profile, done) => {
+    try {
+      const email = profile.emails[0].value;
+      const googleId = profile.id;
+      const name = profile.displayName;
+      let r = await pool.query('SELECT * FROM montblanc.users WHERE google_id = $1', [googleId]);
+      if (r.rows.length) return done(null, r.rows[0]);
+      r = await pool.query('SELECT * FROM montblanc.users WHERE email = $1', [email]);
+      if (r.rows.length) {
+        await pool.query('UPDATE montblanc.users SET google_id = $1 WHERE id = $2', [googleId, r.rows[0].id]);
+        return done(null, { ...r.rows[0], google_id: googleId });
+      }
+      const nu = await pool.query(
+        'INSERT INTO montblanc.users (name, email, google_id, password_hash) VALUES ($1,$2,$3,$4) RETURNING *',
+        [name, email, googleId, 'GOOGLE_ONLY']
+      );
+      return done(null, nu.rows[0]);
+    } catch (e) { return done(e); }
+  }));
+}
 
 // Auto-migrate orders table: add status and payment_proof_url columns
 pool.query(`
@@ -69,6 +108,7 @@ const upload = multer({
 
 const app = express();
 app.use(express.json());
+app.use(passport.initialize());
 
 // Serve static files (support.js, etc.)
 app.use(express.static(__dirname));
@@ -104,6 +144,8 @@ app.post('/api/login', async (req, res) => {
     const r = await pool.query('SELECT * FROM montblanc.users WHERE email = $1', [email]);
     if (!r.rows.length) return res.status(401).json({ error: 'Usuário não encontrado' });
     const user = r.rows[0];
+    if (!user.password_hash || user.password_hash === 'GOOGLE_ONLY')
+      return res.status(401).json({ error: 'Este e-mail usa login com Google. Clique em "Continuar com Google".' });
     const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(401).json({ error: 'Senha incorreta' });
     res.json({ ok: true, user: { id: user.id, name: user.name, email: user.email, apartment: user.apartment, is_master: user.is_master } });
@@ -111,6 +153,48 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+
+// ─── GOOGLE OAUTH ─────────────────────────────────────────────────────────────
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['email', 'profile'], session: false })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: '/?error=google_auth_failed' }),
+  async (req, res) => {
+    try {
+      const code = crypto.randomBytes(32).toString('hex');
+      await pool.query(
+        'INSERT INTO montblanc.auth_codes (code, user_id, expires_at) VALUES ($1,$2,$3)',
+        [code, req.user.id, new Date(Date.now() + 5 * 60 * 1000)]
+      );
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4000';
+      res.redirect(`${frontendUrl}/?gc=${code}`);
+    } catch (e) {
+      res.redirect('/?error=google_auth_failed');
+    }
+  }
+);
+
+app.get('/api/auth/google/user', async (req, res) => {
+  const { code } = req.query;
+  if (!code) return res.status(400).json({ error: 'Código ausente' });
+  try {
+    const r = await pool.query(
+      'DELETE FROM montblanc.auth_codes WHERE code = $1 AND expires_at > NOW() RETURNING user_id',
+      [code]
+    );
+    if (!r.rows.length) return res.status(400).json({ error: 'Código inválido ou expirado' });
+    const u = await pool.query('SELECT * FROM montblanc.users WHERE id = $1', [r.rows[0].user_id]);
+    const user = u.rows[0];
+    res.json({ user: { id: user.id, name: user.name, email: user.email, apartment: user.apartment || null, is_master: user.email === MASTER_EMAIL } });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 app.post('/api/user/:id/apartment', async (req, res) => {
   const { apartment } = req.body;

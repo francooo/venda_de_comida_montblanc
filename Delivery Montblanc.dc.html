@@ -51,7 +51,7 @@
           </div>
           <button onClick="{{ doLogin }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;">Entrar <i class="ph-bold ph-arrow-right"></i></button>
           <div style="display:flex;align-items:center;gap:12px;margin:8px 0;color:#B7B0A2;font-size:13px;"><div style="flex:1;height:1px;background:#E7DECB;"></div>ou<div style="flex:1;height:1px;background:#E7DECB;"></div></div>
-          <button onClick="{{ doLogin }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20" style="flex-shrink:0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continuar com Google</button>
+          <button onClick="{{ doGoogleAuth }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20" style="flex-shrink:0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continuar com Google</button>
           <div style="text-align:center;font-size:14px;color:#6B675F;"><span onClick="{{ goForgotPassword }}" style="color:#1B8A4F;font-weight:600;cursor:pointer;">Esqueci a senha</span></div>
           <div style="text-align:center;margin-top:4px;font-size:14px;color:#6B675F;">Não tem conta? <span onClick="{{ goRegister }}" style="color:#1B8A4F;font-weight:700;cursor:pointer;">Cadastre-se</span></div>
           <div style="text-align:center;font-size:12px;color:#B7B0A2;margin-top:auto;padding-top:18px;">Acesso exclusivo para moradores do Cond. Montblanc</div>
@@ -73,7 +73,7 @@
           <input type="tel" value="{{ regPhone }}" onInput="{{ onRegPhone }}" placeholder="Telefone / WhatsApp" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
           <input type="password" value="{{ regPassword }}" onInput="{{ onRegPassword }}" placeholder="Crie uma senha" style="border:1px solid #E7DECB;background:#fff;border-radius:13px;padding:15px;font-size:16px;width:100%;">
           <button onClick="{{ doRegister }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;">Continuar</button>
-          <button onClick="{{ doRegister }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20" style="flex-shrink:0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Cadastrar com Google</button>
+          <button onClick="{{ doGoogleAuth }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20" style="flex-shrink:0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Cadastrar com Google</button>
         </div>
       </div>
     </sc-if>
@@ -902,7 +902,20 @@ class Component extends DCLogic {
     this._fetch('GET', '/products').then(p => this.setState({ products: p })).catch(() => {});
     this._fetch('GET', '/categories').then(c => this.setState({ categories: c })).catch(() => {});
     this._fetch('GET', '/store/status').then(r => this.setState({ storeOpen: r.open !== false })).catch(() => {});
+    const params = new URLSearchParams(window.location.search);
+    const gc = params.get('gc');
+    if (gc) {
+      window.history.replaceState({}, '', window.location.pathname);
+      this._fetch('GET', '/auth/google/user?code=' + gc)
+        .then(res => {
+          this.setState({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master }, () => { this.loadOrders(); this._loadFavorites(); });
+          if (res.user.apartment) { this.tab('home'); } else { this.go('apt'); }
+        })
+        .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao autenticar com Google'));
+    }
   }
+
+  doGoogleAuth = () => { window.location.href = '/auth/google'; };
 
   _loadFavorites() {
     if (!this.state.userId) return;
@@ -1462,7 +1475,7 @@ class Component extends DCLogic {
       trackSteps, orderEta, orderDelivered: s.orderStep >= 3,
       payPix: payOpt('pix'), payCard: payOpt('card'), payCash: payOpt('cash'),
       go: this.go, back: this.back,
-      doLogin: this.doLogin, doRegister: this.doRegister, goRegister: () => this.go('register'),
+      doLogin: this.doLogin, doRegister: this.doRegister, doGoogleAuth: this.doGoogleAuth, goRegister: () => this.go('register'),
       goForgotPassword: () => this.go('forgotPassword'),
       doForgotPassword: this.doForgotPassword, doResetPassword: this.doResetPassword,
       goFav: () => this.tab('favorites'), goHist: () => this.tab('history'),
