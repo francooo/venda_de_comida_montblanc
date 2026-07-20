@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iI0ZGNUExRiIvPgogIDxwYXRoIGQ9Ik03IDdWNS4yUTkuNSAzLjggMTIgNS4yVjciIGZpbGw9IndoaXRlIi8+CiAgPHJlY3QgeD0iNCIgeT0iNyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjguNSIgcng9IjEuNSIgZmlsbD0id2hpdGUiLz4KICA8bGluZSB4MT0iOSIgeTE9IjciIHgyPSI5IiB5Mj0iMTUuNSIgc3Ryb2tlPSIjRkY1QTFGIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0xMyAxNkMxNSAxMiAyMCAxMSAyMyAxMy41TDI1LjUgMTkiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4zIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8bGluZSB4MT0iOCIgeTE9IjE5IiB4Mj0iMjUiIHkyPSIxOSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIyNC41IiB5MT0iMTQiIHgyPSIyNS41IiB5Mj0iMTkiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8bGluZSB4MT0iMjMiIHkxPSIxMi41IiB4Mj0iMjcuNSIgeTI9IjEyLjUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSI4IiBjeT0iMjMuNSIgcj0iNC4yIiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIuMiIvPgogIDxjaXJjbGUgY3g9IjgiIGN5PSIyMy41IiByPSIxLjMiIGZpbGw9IndoaXRlIi8+CiAgPGNpcmNsZSBjeD0iMjUuNSIgY3k9IjIzLjUiIHI9IjQuMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyLjIiLz4KICA8Y2lyY2xlIGN4PSIyNS41IiBjeT0iMjMuNSIgcj0iMS4zIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -217,7 +218,7 @@
                     <div style="font-size:11px;color:#A39C90;margin:2px 0 8px;">{{ p.unit }}</div>
                     <div style="display:flex;align-items:center;justify-content:space-between;">
                       <span style="font-weight:800;font-size:16px;color:#15723F;">{{ p.priceText }}</span>
-                      <button onClick="{{ p.add }}" style="width:34px;height:34px;border-radius:11px;background:#1B8A4F;border:none;color:#fff;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-plus"></i></button>
+                      <button onClick="{{ p.add }}" style="width:36px;height:36px;border-radius:11px;background:#1B8A4F;border:none;color:#fff;cursor:pointer;font-size:19px;display:flex;align-items:center;justify-content:center;"><i class="ph-fill ph-shopping-cart"></i></button>
                     </div>
                   </div>
                 </div>
@@ -384,6 +385,7 @@
               <div style="font-size:13px;color:#15723F;margin-top:4px;">Aguardando confirmação da loja.</div>
             </div>
           </sc-if>
+          <button onClick="{{ goTracking }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph ph-map-pin" style="font-size:20px;"></i> Acompanhar pedido</button>
           <button onClick="{{ goHistory }}" style="width:100%;background:#fff;color:#1C1A17;border:1px solid #E0D8C6;border-radius:14px;padding:15px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><i class="ph ph-list-bullets" style="color:#1B8A4F;font-size:20px;"></i> Ver meus pedidos</button>
         </div>
       </div>
@@ -392,7 +394,7 @@
     <!-- ============ ACOMPANHAR PEDIDO ============ -->
     <sc-if value="{{ scr_tracking }}" hint-placeholder-val="{{ false }}">
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
-        <div style="padding:24px 22px 14px;border-bottom:1px solid #EFE8DA;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Acompanhar pedido</div><div style="font-size:13px;color:#A39C90;margin-top:3px;">Pedido #2847 · Loja 608</div></div>
+        <div style="padding:24px 22px 14px;border-bottom:1px solid #EFE8DA;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Acompanhar pedido</div><div style="font-size:13px;color:#A39C90;margin-top:3px;">Pedido #{{ orderShortId }} · Loja 608</div></div>
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:22px;">
           <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);border-radius:20px;padding:24px;color:#fff;margin-bottom:24px;text-align:center;">
             <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;animation:pulse 2s infinite;"><i class="ph-fill ph-moped"></i></div>
@@ -430,9 +432,14 @@
                 <div style="font-size:13px;color:#A39C90;margin-top:6px;">{{ o.date }} · {{ o.itemsSummary }}</div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
                   <span style="font-weight:800;color:#15723F;font-size:16px;">{{ o.totalText }}</span>
-                  <sc-if value="{{ o.canSendProof }}" hint-placeholder-val="{{ false }}">
-                    <button onClick="{{ o.sendProof }}" style="background:#FFF4E6;color:#D97706;border:1px solid #F0D090;border-radius:10px;padding:8px 13px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;"><i class="ph ph-upload-simple"></i> Comprovante</button>
-                  </sc-if>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <sc-if value="{{ o.canTrack }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ o.trackOrder }}" style="background:#EAF6EE;color:#1B8A4F;border:1px solid #B6DFC6;border-radius:10px;padding:8px 13px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;"><i class="ph ph-map-pin"></i> Acompanhar</button>
+                    </sc-if>
+                    <sc-if value="{{ o.canSendProof }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ o.sendProof }}" style="background:#FFF4E6;color:#D97706;border:1px solid #F0D090;border-radius:10px;padding:8px 13px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;"><i class="ph ph-upload-simple"></i> Comprovante</button>
+                    </sc-if>
+                  </div>
                 </div>
               </div>
             </sc-for>
@@ -765,6 +772,7 @@ class Component extends DCLogic {
     cart: {},
     favorites: {},
     orderStep: 0,
+    trackingStatus: 'created',
     toast: null,
     form: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '' },
     editingProductId: null,
@@ -955,16 +963,36 @@ class Component extends DCLogic {
         this.setState({ orderStep: 0, cart: {}, currentOrderId: r.order.id, currentOrderTotal: total, proofSent: false });
         this.go('pixPayment');
         this._reloadProducts();
-        clearInterval(this._t);
-        this._t = setInterval(() => {
-          this.setState(st => {
-            const next = Math.min(st.orderStep + 1, 3);
-            if (next >= 3) clearInterval(this._t);
-            return { orderStep: next };
-          }, () => { if (this.state.orderStep === 2) this.showToast('ph-fill ph-moped', 'Seu pedido saiu para entrega!'); });
-        }, 2400);
+        this.startOrderPolling();
       })
       .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao fazer pedido'));
+  };
+
+  startOrderPolling = () => {
+    this.stopOrderPolling();
+    const STATUS_STEP = { created: 0, paid: 1, delivering: 2, delivered: 3, completed: 3 };
+    const TOAST_STEP = { 1: null, 2: 'ph-fill ph-moped|Seu pedido saiu para entrega!' };
+    this._pollT = setInterval(() => {
+      const { userId, currentOrderId, orderStep } = this.state;
+      if (!userId || !currentOrderId) return;
+      this._fetch('GET', '/orders/' + userId)
+        .then(orders => {
+          const o = orders.find(x => x.id === currentOrderId);
+          if (!o) return;
+          const step = STATUS_STEP[o.status] ?? 0;
+          if (step !== orderStep) {
+            const toast = TOAST_STEP[step];
+            if (toast) { const [icon, msg] = toast.split('|'); this.showToast(icon, msg); }
+          }
+          this.setState({ orderStep: step, trackingStatus: o.status, orders });
+          if (o.status === 'completed') this.stopOrderPolling();
+        })
+        .catch(() => {});
+    }, 10000);
+  };
+
+  stopOrderPolling = () => {
+    if (this._pollT) { clearInterval(this._pollT); this._pollT = null; }
   };
 
   // ── seller panel ─────────────────────────────────────────────────────────
@@ -1080,7 +1108,7 @@ class Component extends DCLogic {
   };
 
   advanceOrderStatus = (id, current) => {
-    const next = { created: 'paid', paid: 'delivering', delivering: 'delivered' };
+    const next = { created: 'paid', paid: 'delivering', delivering: 'delivered', delivered: 'completed' };
     const status = next[current];
     if (!status) return;
     this._fetch('PUT', '/orders/' + id + '/status', { status })
@@ -1212,15 +1240,17 @@ class Component extends DCLogic {
     tabs.push({ key: 'profile', label: 'Perfil', icon: 'ph-user', active: scr('profile') });
     const tabItems = tabs.map(t => ({ label: t.label, iconClass: (t.active ? 'ph-fill ' : 'ph ') + t.icon, style: this.tabStyle(t.active), go: () => this.tab(t.key) }));
 
-    const steps = ['Pedido confirmado', 'Preparando seu pedido', 'Saiu para entrega', 'Entregue no seu apê'];
-    const stepIcons = ['ph-check-circle', 'ph-cooking-pot', 'ph-moped', 'ph-house'];
+    const lastStepLabel = s.trackingStatus === 'completed' ? 'Pedido finalizado!' : 'Entregue no seu apê';
+    const steps = ['Pedido confirmado', 'Preparando seu pedido', 'Saiu para entrega', lastStepLabel];
+    const stepIcons = ['ph-check-circle', 'ph-cooking-pot', 'ph-moped', s.trackingStatus === 'completed' ? 'ph-check-fat' : 'ph-house'];
     const trackSteps = steps.map((label, i) => ({
       label, iconClass: (i <= s.orderStep ? 'ph-fill ' : 'ph ') + stepIcons[i],
       dotStyle: { width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '20px', background: i <= s.orderStep ? '#1B8A4F' : '#fff', color: i <= s.orderStep ? '#fff' : '#C9C2B4', border: i <= s.orderStep ? 'none' : '2px solid #E7DECB' },
       lineStyle: { width: '2px', flex: 1, minHeight: '22px', background: i < s.orderStep ? '#1B8A4F' : '#E7DECB' },
       labelStyle: { fontSize: '15px', fontWeight: i === s.orderStep ? 700 : 600, color: i <= s.orderStep ? '#1C1A17' : '#A39C90' }
     }));
-    const orderEta = ['Aguardando confirmação...', 'Pronto em ~15 min', 'Chega em poucos minutos', 'Pedido entregue. Bom apetite!'][s.orderStep];
+    const orderEtaMap = { created: 'Aguardando confirmação...', paid: 'Pronto em ~15 min', delivering: 'Chega em poucos minutos', delivered: 'Pedido entregue. Bom apetite!', completed: 'Pedido finalizado!' };
+    const orderEta = orderEtaMap[s.trackingStatus] || orderEtaMap.created;
 
     const chat = s.chat.map(m => ({
       text: m.text,
@@ -1238,7 +1268,7 @@ class Component extends DCLogic {
       scr_manageProducts: scr('manageProducts'), scr_editProduct: scr('editProduct'),
       scr_masterOrders: scr('masterOrders'), scr_pixPayment: scr('pixPayment'),
       scr_forgotPassword: scr('forgotPassword'), scr_resetPassword: scr('resetPassword'),
-      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct', 'masterOrders', 'pixPayment'].includes(s.screen),
+      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct', 'masterOrders'].includes(s.screen),
       tabItems, toast: s.toast,
       apartment: s.apartment, isMaster: s.isMaster, aptCanContinue: !!s.apartment, aptList,
       aptInput: s.aptInput,
@@ -1281,14 +1311,17 @@ class Component extends DCLogic {
       pixTotalText: this.brl(s.currentOrderTotal),
       proofSent: s.proofSent, proofNotSent: !s.proofSent,
       proofTrigger: this.proofTrigger, onProofChange: this.onProofChange,
-      goHistory: () => { this.loadOrders(); this.tab('history'); },
+      goHistory: () => { this.stopOrderPolling(); this.loadOrders(); this.tab('history'); },
+      goTracking: () => { this.startOrderPolling(); this.go('tracking'); },
+      orderShortId: s.currentOrderId ? String(s.currentOrderId).slice(-4).toUpperCase() : '----',
+      trackingStatus: s.trackingStatus,
       ...(() => {
-        const SL = { created: 'Pedido criado', paid: 'Pedido pago', delivering: 'Em entrega', delivered: 'Entregue ✓' };
+        const SL = { created: 'Pedido criado', paid: 'Pedido pago', delivering: 'Em entrega', delivered: 'Entregue', completed: 'Finalizado' };
         const SS = (st) => {
-          const map = { created: 'background:#F3ECDD;color:#6B675F;', paid: 'background:#DBEAFE;color:#1D4ED8;', delivering: 'background:#FFF4E6;color:#D97706;', delivered: 'background:#EAF6EE;color:#15723F;' };
+          const map = { created: 'background:#F3ECDD;color:#6B675F;', paid: 'background:#DBEAFE;color:#1D4ED8;', delivering: 'background:#FFF4E6;color:#D97706;', delivered: 'background:#EAF6EE;color:#15723F;', completed: 'background:#ECFDF5;color:#065F46;' };
           return (map[st] || map.created) + 'font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;';
         };
-        const NL = { created: 'Confirmar pagamento', paid: 'Saiu para entrega', delivering: 'Confirmar entrega' };
+        const NL = { created: 'Confirmar pagamento', paid: 'Saiu para entrega', delivering: 'Confirmar entrega', delivered: 'Finalizar pedido' };
         const fmtDate = (d) => new Date(d).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
         const fmtId = (id) => String(id).slice(-4).padStart(4, '0');
         const historyOrders = (s.orders || []).map(o => ({
@@ -1296,8 +1329,10 @@ class Component extends DCLogic {
           statusLabel: SL[o.status] || SL.created, statusStyle: SS(o.status),
           date: fmtDate(o.created_at),
           itemsSummary: (o.items || []).map(i => i.name).join(', '),
-          canSendProof: !o.payment_proof_url && o.status === 'created',
-          sendProof: () => { this.setState({ currentOrderId: o.id }); setTimeout(() => this.proofTrigger(), 50); }
+          canSendProof: !o.payment_proof_url && ['created', 'paid'].includes(o.status),
+          sendProof: () => { this.setState({ currentOrderId: o.id }); setTimeout(() => this.proofTrigger(), 50); },
+          canTrack: ['created', 'paid', 'delivering'].includes(o.status),
+          trackOrder: () => { this.setState({ currentOrderId: o.id, trackingStatus: o.status, orderStep: { created: 0, paid: 1, delivering: 2, delivered: 3, completed: 3 }[o.status] ?? 0 }); this.startOrderPolling(); this.go('tracking'); }
         }));
         const masterOrderItems = (s.masterOrders || []).map(o => ({
           shortId: fmtId(o.id), apt: o.apartment, totalText: this.brl(o.total),
@@ -1306,7 +1341,7 @@ class Component extends DCLogic {
           itemsSummary: (o.items || []).map(i => i.name).join(', '),
           hasProof: !!o.payment_proof_url, proofUrl: o.payment_proof_url || '',
           openProof: o.payment_proof_url ? () => this.openLightbox(o.payment_proof_url) : () => {},
-          canAdvance: o.status !== 'delivered',
+          canAdvance: o.status !== 'completed',
           nextLabel: NL[o.status] || 'Avançar',
           advance: () => this.advanceOrderStatus(o.id, o.status || 'created')
         }));

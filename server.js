@@ -202,7 +202,7 @@ app.get('/api/orders/all', async (_req, res) => {
 
 app.put('/api/orders/:id/status', async (req, res) => {
   const { status } = req.body;
-  const valid = ['created', 'paid', 'delivering', 'delivered'];
+  const valid = ['created', 'paid', 'delivering', 'delivered', 'completed'];
   if (!valid.includes(status)) return res.status(400).json({ error: 'Status inválido' });
   try {
     await pool.query('UPDATE montblanc.orders SET status = $1 WHERE id = $2', [status, req.params.id]);
