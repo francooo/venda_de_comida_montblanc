@@ -239,9 +239,13 @@
             <sc-if value="{{ sel.hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ sel.imageUrl }}" onClick="{{ sel.openLightbox }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:zoom-in;"></sc-if>
             <sc-if value="{{ sel.noImage }}" hint-placeholder-val="{{ true }}"><i class="{{ sel.iconClass }}" style="font-size:96px;color:rgba(180,120,40,.5);"></i></sc-if>
             <button onClick="{{ back }}" style="position:absolute;top:18px;left:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;"><i class="ph ph-arrow-left"></i></button>
-            <button onClick="{{ sel.toggleFav }}" style="position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;color:#E8482B;display:flex;align-items:center;justify-content:center;">
+            <button onClick="{{ sel.toggleFav }}" style="position:absolute;top:18px;right:70px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;color:#E8482B;display:flex;align-items:center;justify-content:center;">
               <sc-if value="{{ sel.fav }}" hint-placeholder-val="{{ false }}"><i class="ph-fill ph-heart"></i></sc-if>
               <sc-if value="{{ sel.notFav }}" hint-placeholder-val="{{ true }}"><i class="ph ph-heart"></i></sc-if>
+            </button>
+            <button onClick="{{ openCart }}" style="position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.95);border:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;">
+              <i class="ph ph-shopping-bag-open" style="color:#1B8A4F;"></i>
+              <sc-if value="{{ cartBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-5px;right:-5px;background:#F2A03D;color:#3a2400;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;">{{ cartBadge }}</span></sc-if>
             </button>
             <span style="position:absolute;bottom:14px;left:18px;font-family:'Plus Jakarta Sans';font-size:11px;letter-spacing:.5px;color:rgba(120,80,20,.55);background:rgba(255,255,255,.6);padding:4px 9px;border-radius:7px;">FOTO DO PRODUTO</span>
           </div>
@@ -480,7 +484,13 @@
     <!-- ============ FAVORITOS ============ -->
     <sc-if value="{{ scr_favorites }}" hint-placeholder-val="{{ false }}">
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
-        <div style="padding:26px 22px 12px;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Favoritos</div></div>
+        <div style="padding:26px 22px 12px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;">Favoritos</div>
+          <button onClick="{{ openCart }}" style="position:relative;width:44px;height:44px;border-radius:13px;background:#F5EDE0;border:none;cursor:pointer;font-size:21px;display:flex;align-items:center;justify-content:center;">
+            <i class="ph ph-shopping-bag-open" style="color:#1B8A4F;"></i>
+            <sc-if value="{{ cartBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-5px;right:-5px;background:#F2A03D;color:#3a2400;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;">{{ cartBadge }}</span></sc-if>
+          </button>
+        </div>
         <sc-if value="{{ hasFavs }}" hint-placeholder-val="{{ true }}">
           <div class="app-scroll" style="flex:1;overflow-y:auto;padding:8px 18px 18px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;">
             <sc-for list="{{ favProducts }}" as="p" hint-placeholder-count="2">
