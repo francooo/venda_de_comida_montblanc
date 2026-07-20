@@ -125,7 +125,8 @@
     <!-- ============ SELEÇÃO DE APARTAMENTO ============ -->
     <sc-if value="{{ scr_apt }}" hint-placeholder-val="{{ true }}">
       <div style="flex:1;display:flex;flex-direction:column;animation:scrIn .35s ease;overflow:hidden;">
-        <div style="padding:30px 24px 18px;">
+        <div style="padding:22px 24px 18px;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;"><i class="ph ph-arrow-left"></i></button>
           <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;line-height:1.1;">Qual é o seu apartamento?</div>
           <div style="font-size:14px;color:#6B675F;margin-top:8px;line-height:1.5;">Suas entregas chegam aqui. O apartamento <b style="color:#1B8A4F;">608</b> é a loja oficial do condomínio.</div>
           <div style="font-size:13px;color:#8A7E72;margin-top:6px;display:flex;align-items:center;gap:6px;"><i class="ph ph-users" style="font-size:15px;color:#1B8A4F;flex-shrink:0;"></i>Mais de um familiar pode usar o mesmo apartamento.</div>
@@ -352,9 +353,9 @@
     <!-- ============ PIX PAYMENT ============ -->
     <sc-if value="{{ scr_pixPayment }}" hint-placeholder-val="{{ false }}">
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
-        <div style="padding:24px 22px 14px;border-bottom:1px solid #EFE8DA;">
-          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Pagar via Pix</div>
-          <div style="font-size:13px;color:#A39C90;margin-top:3px;">Pedido confirmado · aguardando pagamento</div>
+        <div style="padding:20px 22px 14px;border-bottom:1px solid #EFE8DA;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-arrow-left"></i></button>
+          <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Pagar via Pix</div><div style="font-size:13px;color:#A39C90;margin-top:2px;">Pedido confirmado · aguardando pagamento</div></div>
         </div>
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px;">
           <!-- Confirmação -->
@@ -403,7 +404,10 @@
     <!-- ============ ACOMPANHAR PEDIDO ============ -->
     <sc-if value="{{ scr_tracking }}" hint-placeholder-val="{{ false }}">
       <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
-        <div style="padding:24px 22px 14px;border-bottom:1px solid #EFE8DA;"><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Acompanhar pedido</div><div style="font-size:13px;color:#A39C90;margin-top:3px;">Pedido #{{ orderShortId }} · Loja 608</div></div>
+        <div style="padding:20px 22px 14px;border-bottom:1px solid #EFE8DA;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:42px;height:42px;border-radius:12px;border:1px solid #E7DECB;background:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-arrow-left"></i></button>
+          <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;">Acompanhar pedido</div><div style="font-size:13px;color:#A39C90;margin-top:2px;">Pedido #{{ orderShortId }} · Loja 608</div></div>
+        </div>
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:22px;">
           <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);border-radius:20px;padding:24px;color:#fff;margin-bottom:24px;text-align:center;">
             <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;animation:pulse 2s infinite;"><i class="ph-fill ph-moped"></i></div>
