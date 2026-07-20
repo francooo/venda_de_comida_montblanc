@@ -469,6 +469,88 @@ app.post('/api/orders', async (req, res) => {
       await client.query('UPDATE montblanc.products SET sold = sold + $1 WHERE id = $2', [item.qty, item.id]);
     }
     await client.query('COMMIT');
+
+    // Notificação por email ao master (assíncrono — não bloqueia a resposta)
+    if (resend) {
+      (async () => {
+        try {
+          const userName = user_id
+            ? (await pool.query('SELECT name FROM montblanc.users WHERE id = $1', [user_id])).rows[0]?.name || 'Cliente'
+            : 'Cliente';
+          const productIds = items.map(i => i.id);
+          const prodRows = (await pool.query(
+            'SELECT id, name, unit FROM montblanc.products WHERE id = ANY($1::int[])',
+            [productIds]
+          )).rows;
+          const prodMap = Object.fromEntries(prodRows.map(p => [p.id, p]));
+          const itemRows = items.map(item => {
+            const prod = prodMap[item.id] || {};
+            const subtotal = (Number(item.price) * item.qty).toFixed(2).replace('.', ',');
+            return `<tr>
+              <td style="padding:10px 14px;border-bottom:1px solid #F0E9DB;">${prod.name || 'Produto'}</td>
+              <td style="padding:10px 14px;border-bottom:1px solid #F0E9DB;text-align:center;">${item.qty} ${prod.unit || ''}</td>
+              <td style="padding:10px 14px;border-bottom:1px solid #F0E9DB;text-align:right;">R$ ${subtotal}</td>
+            </tr>`;
+          }).join('');
+          const totalFormatted = Number(total).toFixed(2).replace('.', ',');
+          const now = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+          await resend.emails.send({
+            from: 'Delivery Montblanc <onboarding@resend.dev>',
+            to: MASTER_EMAIL,
+            subject: `Novo pedido — Apto ${apartment} · Pedido #${order.id}`,
+            html: `
+<div style="font-family:sans-serif;max-width:560px;margin:0 auto;background:#FDFAF5;border-radius:16px;overflow:hidden;border:1px solid #E7DECB;">
+  <div style="background:linear-gradient(135deg,#1B8A4F,#15723F);padding:28px 28px 20px;">
+    <div style="font-size:13px;color:rgba(255,255,255,.75);font-weight:600;letter-spacing:.5px;margin-bottom:4px;">DELIVERY MONTBLANC · LOJA OFICIAL</div>
+    <div style="font-size:24px;font-weight:800;color:#fff;">Novo pedido recebido!</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:6px;">${now}</div>
+  </div>
+  <div style="padding:20px 28px;background:#fff;border-bottom:1px solid #F0E9DB;">
+    <table style="width:100%;border-collapse:collapse;">
+      <tr>
+        <td style="padding:4px 0;width:33%;">
+          <div style="font-size:11px;color:#A39C90;font-weight:700;letter-spacing:.4px;">PEDIDO</div>
+          <div style="font-size:20px;font-weight:800;color:#1C1A17;">#${order.id}</div>
+        </td>
+        <td style="padding:4px 0;width:33%;">
+          <div style="font-size:11px;color:#A39C90;font-weight:700;letter-spacing:.4px;">APARTAMENTO</div>
+          <div style="font-size:20px;font-weight:800;color:#1C1A17;">${apartment}</div>
+        </td>
+        <td style="padding:4px 0;width:33%;">
+          <div style="font-size:11px;color:#A39C90;font-weight:700;letter-spacing:.4px;">CLIENTE</div>
+          <div style="font-size:20px;font-weight:800;color:#1C1A17;">${userName}</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div style="padding:20px 28px;">
+    <div style="font-size:12px;font-weight:700;color:#A39C90;letter-spacing:.4px;margin-bottom:10px;">PRODUTOS</div>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#F8F4ED;">
+          <th style="padding:10px 14px;text-align:left;font-weight:700;color:#6B675F;border-bottom:2px solid #E7DECB;">Produto</th>
+          <th style="padding:10px 14px;text-align:center;font-weight:700;color:#6B675F;border-bottom:2px solid #E7DECB;">Qtd</th>
+          <th style="padding:10px 14px;text-align:right;font-weight:700;color:#6B675F;border-bottom:2px solid #E7DECB;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+  </div>
+  <div style="padding:0 28px 24px;text-align:right;">
+    <span style="font-size:15px;color:#6B675F;font-weight:600;">Total: </span>
+    <span style="font-size:22px;font-weight:800;color:#1B8A4F;">R$ ${totalFormatted}</span>
+  </div>
+  <div style="padding:16px 28px;background:#F0E9DB;text-align:center;font-size:12px;color:#A39C90;">
+    Delivery Montblanc · Apartamento 608 · Condomínio Montblanc
+  </div>
+</div>`,
+          });
+        } catch (emailErr) {
+          console.error('email pedido:', emailErr.message);
+        }
+      })();
+    }
+
     res.json({ ok: true, order });
   } catch (e) {
     await client.query('ROLLBACK');
