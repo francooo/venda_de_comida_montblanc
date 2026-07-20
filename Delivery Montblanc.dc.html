@@ -565,7 +565,7 @@
         <div class="app-scroll" style="flex:1;overflow-y:auto;padding:14px 18px 20px;display:flex;flex-direction:column;gap:12px;">
           <sc-if value="{{ hasMasterOrders }}" hint-placeholder-val="{{ true }}">
             <sc-for list="{{ masterOrderItems }}" as="o" hint-placeholder-count="4">
-              <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:10px;">
+              <div onClick="{{ o.openDetail }}" style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:10px;cursor:pointer;">
                 <div style="display:flex;align-items:center;justify-content:space-between;">
                   <div style="display:flex;flex-direction:column;gap:2px;"><div><span style="font-weight:700;font-size:15px;">Apto {{ o.apt }}</span><span style="font-size:13px;color:#A39C90;margin-left:8px;">#{{ o.shortId }}</span></div><span style="font-size:12px;color:#A39C90;">{{ o.buyerName }}</span></div>
                   <span style="{{ o.statusStyle }}">{{ o.statusLabel }}</span>
@@ -593,6 +593,60 @@
             </div>
           </sc-if>
         </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ DETALHE DO PEDIDO (MASTER) ============ -->
+    <sc-if value="{{ scr_masterOrderDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;animation:scrIn .3s ease;">
+        <div style="background:linear-gradient(160deg,#1B8A4F,#15723F);padding:24px 22px 20px;color:#fff;display:flex;align-items:center;gap:14px;">
+          <button onClick="{{ back }}" style="width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.16);border:none;color:#fff;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ph ph-arrow-left"></i></button>
+          <div style="flex:1;">
+            <div style="font-size:11px;opacity:.8;font-weight:600;letter-spacing:.4px;">PAINEL DO VENDEDOR</div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;margin-top:1px;">Pedido #{{ masterOrderDetail.shortId }}</div>
+          </div>
+          <span style="{{ masterOrderDetail.statusStyle }}">{{ masterOrderDetail.statusLabel }}</span>
+        </div>
+        <div class="app-scroll" style="flex:1;overflow-y:auto;padding:18px 18px 0;">
+          <div style="background:#fff;border:1px solid #F0E9DB;border-radius:16px;padding:15px;margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+              <div>
+                <div style="font-weight:700;font-size:15px;">Apto {{ masterOrderDetail.apt }}</div>
+                <div style="font-size:12px;color:#A39C90;margin-top:2px;">{{ masterOrderDetail.buyerName }}</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-weight:800;font-size:17px;color:#15723F;">{{ masterOrderDetail.totalText }}</div>
+                <div style="font-size:11px;color:#C0B8A8;margin-top:2px;">{{ masterOrderDetail.date }}</div>
+              </div>
+            </div>
+            <div style="font-size:13px;color:#6B675F;border-top:1px solid #F4EEE1;padding-top:8px;">{{ masterOrderDetail.itemsSummary }}</div>
+            <sc-if value="{{ masterOrderDetail.hasProof }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ masterOrderDetail.openProof }}" style="margin-top:10px;display:flex;align-items:center;gap:7px;background:#EAF6EE;border:none;border-radius:10px;padding:8px 13px;cursor:pointer;color:#1B8A4F;font-size:13px;font-weight:600;"><i class="ph ph-image" style="font-size:16px;"></i>Ver comprovante</button>
+            </sc-if>
+          </div>
+
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;">Trilha do pedido</div>
+          <sc-for list="{{ masterOrderDetail.steps }}" as="step" hint-placeholder-count="5">
+            <div style="display:flex;gap:16px;">
+              <div style="display:flex;flex-direction:column;align-items:center;width:40px;flex-shrink:0;">
+                <div style="{{ step.circleStyle }}"><i class="{{ step.iconClass }}" style="{{ step.iconStyle }}"></i></div>
+                <sc-if value="{{ step.notLast }}" hint-placeholder-val="{{ true }}">
+                  <div style="{{ step.lineStyle }}"></div>
+                </sc-if>
+              </div>
+              <div style="padding-top:8px;padding-bottom:24px;flex:1;">
+                <div style="{{ step.labelStyle }}">{{ step.label }}</div>
+                <div style="{{ step.descStyle }}">{{ step.desc }}</div>
+              </div>
+            </div>
+          </sc-for>
+          <div style="height:18px;"></div>
+        </div>
+        <sc-if value="{{ masterOrderDetail.canAdvance }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:14px 18px 18px;border-top:1px solid #EFE8DA;background:#FBF7EF;">
+            <button onClick="{{ masterOrderDetail.advance }}" style="width:100%;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;">{{ masterOrderDetail.nextLabel }}</button>
+          </div>
+        </sc-if>
       </div>
     </sc-if>
 
@@ -799,6 +853,7 @@ class Component extends DCLogic {
     proofSent: false,
     orders: [],
     masterOrders: [],
+    selectedMasterOrderId: null,
     editForm: { name: '', price: '', cat: 'Bebidas', desc: '', unit: '', tag: '', icon: '' },
     newCat: '',
     chat: [{ from: 'seller', text: 'Olá! Aqui é da Loja 608. Posso ajudar com o seu pedido?' }],
@@ -1285,9 +1340,9 @@ class Component extends DCLogic {
       scr_profile: scr('profile'), scr_addProduct: scr('addProduct'), scr_categories: scr('categories'),
       scr_chat: scr('chat'), scr_favorites: scr('favorites'),
       scr_manageProducts: scr('manageProducts'), scr_editProduct: scr('editProduct'),
-      scr_masterOrders: scr('masterOrders'), scr_pixPayment: scr('pixPayment'),
+      scr_masterOrders: scr('masterOrders'), scr_masterOrderDetail: scr('masterOrderDetail'), scr_pixPayment: scr('pixPayment'),
       scr_forgotPassword: scr('forgotPassword'), scr_resetPassword: scr('resetPassword'),
-      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct', 'masterOrders'].includes(s.screen),
+      showTabBar: ['home', 'favorites', 'history', 'profile', 'addProduct', 'categories', 'manageProducts', 'editProduct', 'masterOrders', 'masterOrderDetail'].includes(s.screen),
       tabItems, toast: s.toast,
       apartment: s.apartment, isMaster: s.isMaster, aptCanContinue: !!s.apartment, aptList,
       aptInput: s.aptInput,
@@ -1324,6 +1379,7 @@ class Component extends DCLogic {
       showLightbox: !!s.lightboxUrl, lightboxUrl: s.lightboxUrl || '', closeLightbox: this.closeLightbox,
       goManageProducts: () => this.go('manageProducts'),
       goMasterOrders: () => { this.loadMasterOrders(); this.go('masterOrders'); },
+      goMasterOrderDetail: (id) => { this.setState({ selectedMasterOrderId: id }); this.go('masterOrderDetail'); },
       refreshMasterOrders: this.loadMasterOrders,
       storeOpen: s.storeOpen, storeClosed: !s.storeOpen, toggleStore: this.toggleStore,
       copyPixKey: this.copyPixKey,
@@ -1359,14 +1415,47 @@ class Component extends DCLogic {
           date: fmtDate(o.created_at),
           itemsSummary: (o.items || []).map(i => i.name).join(', '),
           hasProof: !!o.payment_proof_url, proofUrl: o.payment_proof_url || '',
-          openProof: o.payment_proof_url ? () => this.openLightbox(o.payment_proof_url) : () => {},
+          openProof: o.payment_proof_url ? (e) => { e && e.stopPropagation(); this.openLightbox(o.payment_proof_url); } : (e) => { e && e.stopPropagation(); },
           canAdvance: o.status !== 'completed',
           nextLabel: NL[o.status] || 'Avançar',
-          advance: () => this.advanceOrderStatus(o.id, o.status || 'created')
+          advance: (e) => { e && e.stopPropagation(); this.advanceOrderStatus(o.id, o.status || 'created'); },
+          openDetail: () => { this.setState({ selectedMasterOrderId: o.id }); this.go('masterOrderDetail'); }
         }));
+
+        const STATUS_ORDER = ['created', 'paid', 'delivering', 'delivered', 'completed'];
+        const STATUS_DESCS = { created: 'Pedido recebido pela loja', paid: 'Pagamento confirmado', delivering: 'Saiu para entrega', delivered: 'Entregue no apartamento', completed: 'Pedido finalizado' };
+        const STATUS_ICONS = { created: 'ph-receipt', paid: 'ph-currency-circle-dollar', delivering: 'ph-moped', delivered: 'ph-house', completed: 'ph-star' };
+        const selOrder = (s.masterOrders || []).find(o => o.id === s.selectedMasterOrderId) || null;
+        const masterOrderDetail = selOrder ? (() => {
+          const currentIdx = STATUS_ORDER.indexOf(selOrder.status);
+          const steps = STATUS_ORDER.map((key, i) => {
+            const isDone = i < currentIdx; const isCurrent = i === currentIdx; const isFuture = i > currentIdx;
+            return {
+              label: SL[key] || key, desc: STATUS_DESCS[key],
+              iconClass: isDone ? 'ph-bold ph-check' : ('ph ' + STATUS_ICONS[key]),
+              circleStyle: 'width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;' + (isFuture ? 'background:#EDE8DF;' : 'background:#1B8A4F;') + (isCurrent ? 'box-shadow:0 0 0 8px rgba(27,138,79,.13);' : ''),
+              iconStyle: 'font-size:18px;' + (isFuture ? 'color:#B8B0A4;' : 'color:#fff;'),
+              labelStyle: 'font-weight:700;font-size:14px;' + (isFuture ? 'color:#B8B0A4;' : 'color:#1C1A17;'),
+              descStyle: 'font-size:12px;margin-top:2px;' + (isFuture ? 'color:#CEC8BE;' : 'color:#6B675F;'),
+              lineStyle: 'width:2px;min-height:30px;flex:1;margin:4px 0;' + (isDone ? 'background:#1B8A4F;' : 'background:#D4CEC6;'),
+              notLast: i < STATUS_ORDER.length - 1,
+            };
+          });
+          return {
+            shortId: fmtId(selOrder.id), apt: selOrder.apartment, buyerName: selOrder.buyer_name || 'Morador',
+            totalText: this.brl(selOrder.total), statusLabel: SL[selOrder.status] || SL.created, statusStyle: SS(selOrder.status),
+            date: fmtDate(selOrder.created_at), itemsSummary: (selOrder.items || []).map(i => i.name).join(', '),
+            hasProof: !!selOrder.payment_proof_url, openProof: selOrder.payment_proof_url ? () => this.openLightbox(selOrder.payment_proof_url) : () => {},
+            canAdvance: selOrder.status !== 'completed', nextLabel: NL[selOrder.status] || 'Avançar',
+            advance: () => this.advanceOrderStatus(selOrder.id, selOrder.status || 'created'),
+            steps,
+          };
+        })() : { steps: [], shortId: '', apt: '', buyerName: '', totalText: '', statusLabel: '', statusStyle: '', date: '', itemsSummary: '', hasProof: false, openProof: () => {}, canAdvance: false, nextLabel: '', advance: () => {} };
+
         return {
           historyOrders, hasOrders: historyOrders.length > 0, noOrders: historyOrders.length === 0,
-          masterOrderItems, hasMasterOrders: masterOrderItems.length > 0, noMasterOrders: masterOrderItems.length === 0
+          masterOrderItems, hasMasterOrders: masterOrderItems.length > 0, noMasterOrders: masterOrderItems.length === 0,
+          masterOrderDetail
         };
       })(),
       chat, chatInput: s.chatInput,
