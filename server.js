@@ -62,6 +62,11 @@ if (process.env.GOOGLE_CLIENT_ID) {
   }));
 }
 
+// Auto-migrate products table: add stock column
+pool.query(`
+  ALTER TABLE montblanc.products ADD COLUMN IF NOT EXISTS stock INTEGER NOT NULL DEFAULT 0;
+`).catch(e => console.error('stock migrate:', e.message));
+
 // Auto-migrate orders table: add status and payment_proof_url columns
 pool.query(`
   ALTER TABLE montblanc.orders ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'created';
@@ -391,11 +396,11 @@ app.get('/api/products', async (_req, res) => {
 });
 
 app.post('/api/products', async (req, res) => {
-  const { id, name, cat, price, unit, icon, description, tag } = req.body;
+  const { id, name, cat, price, unit, icon, description, tag, stock } = req.body;
   try {
     const r = await pool.query(
-      'INSERT INTO montblanc.products (id, name, cat, price, unit, icon, description, tag) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',
-      [id, name, cat, price, unit, icon || 'ph-package', description || '', tag || 'Novo']
+      'INSERT INTO montblanc.products (id, name, cat, price, unit, icon, description, tag, stock) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',
+      [id, name, cat, price, unit, icon || 'ph-package', description || '', tag || 'Novo', parseInt(stock) || 0]
     );
     res.json(r.rows[0]);
   } catch (e) {
@@ -404,13 +409,13 @@ app.post('/api/products', async (req, res) => {
 });
 
 app.put('/api/products/:id', async (req, res) => {
-  const { name, cat, price, unit, icon, description, tag, active } = req.body;
+  const { name, cat, price, unit, icon, description, tag, active, stock } = req.body;
   try {
     const r = await pool.query(
       `UPDATE montblanc.products
-       SET name=$1, cat=$2, price=$3, unit=$4, icon=$5, description=$6, tag=$7, active=$8
-       WHERE id=$9 RETURNING *`,
-      [name, cat, price, unit, icon || 'ph-package', description || '', tag || '', active !== false, req.params.id]
+       SET name=$1, cat=$2, price=$3, unit=$4, icon=$5, description=$6, tag=$7, active=$8, stock=$9
+       WHERE id=$10 RETURNING *`,
+      [name, cat, price, unit, icon || 'ph-package', description || '', tag || '', active !== false, parseInt(stock) || 0, req.params.id]
     );
     if (!r.rows.length) return res.status(404).json({ error: 'Produto não encontrado' });
     res.json(r.rows[0]);
@@ -462,11 +467,23 @@ app.post('/api/orders', async (req, res) => {
     );
     const order = orderRes.rows[0];
     for (const item of items) {
+      const stockRow = await client.query(
+        'SELECT stock, name FROM montblanc.products WHERE id = $1 FOR UPDATE',
+        [item.id]
+      );
+      if (!stockRow.rows.length || stockRow.rows[0].stock < item.qty) {
+        await client.query('ROLLBACK');
+        const prodName = stockRow.rows[0]?.name || `Produto #${item.id}`;
+        return res.status(400).json({ error: `Estoque insuficiente: "${prodName}" tem apenas ${stockRow.rows[0]?.stock ?? 0} unidade(s) disponível(is).` });
+      }
       await client.query(
         'INSERT INTO montblanc.order_items (order_id, product_id, quantity, price) VALUES ($1,$2,$3,$4)',
         [order.id, item.id, item.qty, item.price]
       );
-      await client.query('UPDATE montblanc.products SET sold = sold + $1 WHERE id = $2', [item.qty, item.id]);
+      await client.query(
+        'UPDATE montblanc.products SET stock = stock - $1, sold = sold + $1 WHERE id = $2',
+        [item.qty, item.id]
+      );
     }
     await client.query('COMMIT');
 
