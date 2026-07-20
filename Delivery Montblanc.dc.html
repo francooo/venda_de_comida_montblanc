@@ -278,7 +278,7 @@
             <span style="font-weight:700;font-size:17px;min-width:18px;text-align:center;">{{ detailQty }}</span>
             <button onClick="{{ incDetail }}" style="width:30px;height:30px;border-radius:9px;border:none;background:#1B8A4F;cursor:pointer;font-size:17px;color:#fff;display:flex;align-items:center;justify-content:center;"><i class="ph-bold ph-plus"></i></button>
           </div>
-          <button onClick="{{ addDetail }}" style="flex:1;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;{{ addDetailDisabled ? 'opacity:.45;pointer-events:none;' : '' }}">{{ addDetailDisabled ? 'Sem estoque' : 'Adicionar · ' + detailTotalText }}</button>
+          <button onClick="{{ addDetail }}" style="flex:1;background:#1B8A4F;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;{{ addDetailDisabled ? 'opacity:.45;pointer-events:none;' : '' }}"><i class="ph-fill ph-shopping-cart" style="font-size:19px;"></i>{{ addBtnLabel }}</button>
         </div>
       </div>
     </sc-if>
@@ -1439,6 +1439,7 @@ class Component extends DCLogic {
       },
       addDetailDisabled: selStock === 0,
       detailTotalText: this.brl(Number(sel.price || 0) * s.detailQty),
+      addBtnLabel: selStock === 0 ? 'Sem estoque' : 'Adicionar · ' + this.brl(Number(sel.price || 0) * s.detailQty),
       cartItems, cartCount, hasCart: cartItems.length > 0,
       subtotalText: this.brl(subtotal), totalText: this.brl(subtotal),
       cartBadge: cartCount > 0 ? String(cartCount) : '',
