@@ -1224,7 +1224,19 @@ class Component extends DCLogic {
   loadMasterOrders = () => {
     this._fetch('GET', '/orders/all')
       .then(orders => this.setState({ masterOrders: orders }))
-      .catch(() => {});
+      .catch(() => this.showToast('ph-fill ph-warning-circle', 'Erro ao carregar pedidos'));
+  };
+
+  startMasterPoll = () => {
+    this.stopMasterPoll();
+    this._masterPollT = setInterval(() => {
+      if (this.state.screen !== 'masterOrders') { this.stopMasterPoll(); return; }
+      this.loadMasterOrders();
+    }, 30000);
+  };
+
+  stopMasterPoll = () => {
+    if (this._masterPollT) { clearInterval(this._masterPollT); this._masterPollT = null; }
   };
 
   advanceOrderStatus = (id, current) => {
@@ -1459,7 +1471,7 @@ class Component extends DCLogic {
       openEditImgLightbox: () => s.editForm.icon && this.openLightbox(s.editForm.icon),
       showLightbox: !!s.lightboxUrl, lightboxUrl: s.lightboxUrl || '', closeLightbox: this.closeLightbox,
       goManageProducts: () => this.go('manageProducts'),
-      goMasterOrders: () => { this.loadMasterOrders(); this.go('masterOrders'); },
+      goMasterOrders: () => { this.loadMasterOrders(); this.go('masterOrders'); this.startMasterPoll(); },
       goMasterOrderDetail: (id) => { this.setState({ selectedMasterOrderId: id }); this.go('masterOrderDetail'); },
       refreshMasterOrders: this.loadMasterOrders,
       storeOpen: s.storeOpen, storeClosed: !s.storeOpen, toggleStore: this.toggleStore,
