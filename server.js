@@ -496,7 +496,7 @@ app.post('/api/orders', async (req, res) => {
             : 'Cliente';
           const productIds = items.map(i => i.id);
           const prodRows = (await pool.query(
-            'SELECT id, name, unit FROM montblanc.products WHERE id = ANY($1::int[])',
+            'SELECT id, name, unit FROM montblanc.products WHERE id = ANY($1::bigint[])',
             [productIds]
           )).rows;
           const prodMap = Object.fromEntries(prodRows.map(p => [p.id, p]));
