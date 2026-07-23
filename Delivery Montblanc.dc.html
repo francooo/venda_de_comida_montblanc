@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
   .app-scroll::-webkit-scrollbar { width: 0; height: 0; }
   input, textarea, button { font-family: inherit; }
   input:focus, textarea:focus { outline: none; border-color: #1B8A4F !important; }
@@ -29,8 +29,8 @@
 </style>
 </helmet>
 
-<div style="min-height:100vh;background:#ECE3D2;display:flex;align-items:stretch;justify-content:center;font-family:'Plus Jakarta Sans',-apple-system,sans-serif;color:#1C1A17;background-image:radial-gradient(circle at 20% 10%,#F3ECDD 0,transparent 45%),radial-gradient(circle at 85% 90%,#E7F0E5 0,transparent 40%);">
-  <div style="position:relative;width:100%;max-width:440px;background:#FBF7EF;min-height:100vh;box-shadow:0 0 80px rgba(60,45,15,.14);overflow:hidden;display:flex;flex-direction:column;">
+<div style="min-height:100vh;height:100vh;height:100dvh;background:#ECE3D2;display:flex;align-items:stretch;justify-content:center;font-family:'Plus Jakarta Sans',-apple-system,sans-serif;color:#1C1A17;background-image:radial-gradient(circle at 20% 10%,#F3ECDD 0,transparent 45%),radial-gradient(circle at 85% 90%,#E7F0E5 0,transparent 40%);">
+  <div style="position:relative;width:100%;max-width:440px;background:#FBF7EF;height:100vh;height:100dvh;max-height:100dvh;box-shadow:0 0 80px rgba(60,45,15,.14);overflow:hidden;display:flex;flex-direction:column;">
 
     <!-- ============ LOGIN ============ -->
     <sc-if value="{{ scr_login }}" hint-placeholder-val="{{ true }}">
@@ -928,12 +928,24 @@ class Component extends DCLogic {
     this._fetch('GET', '/products').then(p => this.setState({ products: p })).catch(() => {});
     this._fetch('GET', '/categories').then(c => this.setState({ categories: c })).catch(() => {});
     this._fetch('GET', '/store/status').then(r => this.setState({ storeOpen: r.open !== false })).catch(() => {});
+    // Restaurar sessão salva no localStorage (evita login após refresh)
+    try {
+      const saved = localStorage.getItem('montblanc_session');
+      if (saved) {
+        const { userId, name, apartment, isMaster } = JSON.parse(saved);
+        if (userId) {
+          this.setState({ userId, name, apartment: apartment || '', isMaster: !!isMaster }, () => { this.loadOrders(); this._loadFavorites(); });
+          if (apartment) this.tab('home'); else this.go('apt');
+        }
+      }
+    } catch (_) {}
     const params = new URLSearchParams(window.location.search);
     const gc = params.get('gc');
     if (gc) {
       window.history.replaceState({}, '', window.location.pathname);
       this._fetch('GET', '/auth/google/user?code=' + gc)
         .then(res => {
+          localStorage.setItem('montblanc_session', JSON.stringify({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master }));
           this.setState({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master }, () => { this.loadOrders(); this._loadFavorites(); });
           if (res.user.apartment) { this.tab('home'); } else { this.go('apt'); }
         })
@@ -961,8 +973,8 @@ class Component extends DCLogic {
     const { loginEmail, loginPassword } = this.state;
     this._fetch('POST', '/login', { email: loginEmail, password: loginPassword })
       .then(res => {
+        localStorage.setItem('montblanc_session', JSON.stringify({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master }));
         this.setState({ userId: res.user.id, name: res.user.name, apartment: res.user.apartment || '', isMaster: res.user.is_master }, () => { this.loadOrders(); this._loadFavorites(); });
-        this._loadFavorites();
         if (res.user.apartment) { this.tab('home'); } else { this.go('apt'); }
       })
       .catch(e => this.showToast('ph-fill ph-warning-circle', e.message));
@@ -972,7 +984,11 @@ class Component extends DCLogic {
     const { regName, regEmail, regPhone, regPassword } = this.state;
     if (!regName || !regEmail || !regPassword) { this.showToast('ph-fill ph-warning-circle', 'Preencha todos os campos'); return; }
     this._fetch('POST', '/register', { name: regName, email: regEmail, phone: regPhone, password: regPassword })
-      .then(res => { this.setState({ userId: res.user.id, name: res.user.name }); this.go('apt'); })
+      .then(res => {
+        localStorage.setItem('montblanc_session', JSON.stringify({ userId: res.user.id, name: res.user.name, apartment: '', isMaster: res.user.is_master || false }));
+        this.setState({ userId: res.user.id, name: res.user.name });
+        this.go('apt');
+      })
       .catch(e => this.showToast('ph-fill ph-warning-circle', e.message));
   };
 
@@ -1011,6 +1027,14 @@ class Component extends DCLogic {
       this._fetch('POST', '/user/' + userId + '/apartment', { apartment })
         .catch(() => {});
     }
+    // Atualiza sessão salva com o apartamento escolhido
+    try {
+      const saved = localStorage.getItem('montblanc_session');
+      if (saved) {
+        const s = JSON.parse(saved);
+        localStorage.setItem('montblanc_session', JSON.stringify({ ...s, apartment }));
+      }
+    } catch (_) {}
     this._loadFavorites();
     this.tab('home');
   };
@@ -1564,7 +1588,7 @@ class Component extends DCLogic {
       openCart: () => this.go('cart'), goCheckout: () => this.go('checkout'), placeOrder: this.placeOrder,
       goAdd: () => this.go('addProduct'), goCats: () => this.go('categories'), goChat: () => this.go('chat'),
       saveProduct: this.saveProduct, addCategory: this.addCategory, sendChat: this.sendChat,
-      logout: () => this.setState({ userId: null, apartment: '', isMaster: false, favorites: {}, cart: {} }, () => this.tab('login')),
+      logout: () => { localStorage.removeItem('montblanc_session'); this.setState({ userId: null, apartment: '', isMaster: false, favorites: {}, cart: {} }, () => this.tab('login')); },
       onAptInput: this.onAptInput,
       editingApt: s.editingApt, aptEditInput: s.aptEditInput,
       toggleAptEdit: this.toggleAptEdit, onAptEditInput: this.onAptEditInput, saveAptEdit: this.saveAptEdit,
